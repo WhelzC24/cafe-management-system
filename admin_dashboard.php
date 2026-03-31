@@ -2,7 +2,26 @@
 session_start();
 require_once 'db.php';
 
-if (!isset($_SESSION['user_id']) || ($_SESSION['role'] ?? '') !== 'admin') {
+if (!isset($_SESSION['user_id'])) {
+    header('Location: login.html');
+    exit;
+}
+
+// Harden access control: verify role from DB, not only from session.
+$uid = (int)$_SESSION['user_id'];
+$roleFromDb = null;
+$st = mysqli_prepare($conn, 'SELECT role FROM users WHERE id=? LIMIT 1');
+mysqli_stmt_bind_param($st, 'i', $uid);
+mysqli_stmt_execute($st);
+$res = mysqli_stmt_get_result($st);
+if ($res) {
+    $row = mysqli_fetch_assoc($res);
+    $roleFromDb = $row['role'] ?? null;
+}
+mysqli_stmt_close($st);
+
+if ($roleFromDb !== 'admin') {
+    http_response_code(403);
     header('Location: login.html');
     exit;
 }

@@ -89,7 +89,7 @@
             <span class="hi-icon">📍</span>
             <div>
                 <strong>Find Us</strong>
-                <span>123 Coffee Street, Sweet City</span>
+                <span>Cuasi, Loon, Bohol</span>
             </div>
         </div>
     </div>
@@ -375,21 +375,21 @@
                     <span class="info-icon">📍</span>
                     <div>
                         <h4>Address</h4>
-                        <p>123 Coffee Street<br>Sweet City, SC 12345</p>
+                        <p>Cuasi<br>Loon, Bohol</p>
                     </div>
                 </div>
                 <div class="info-block">
                     <span class="info-icon">📞</span>
                     <div>
                         <h4>Phone</h4>
-                        <p><a href="tel:+15551234567">(555) 123-4567</a></p>
+                        <p><a href="tel:+639361679546">09361679546</a></p>
                     </div>
                 </div>
                 <div class="info-block">
                     <span class="info-icon">✉️</span>
                     <div>
                         <h4>Email</h4>
-                        <p><a href="mailto:hello@cozycornercafe.com">hello@cozycornercafe.com</a></p>
+                        <p><a href="mailto:wlaniba330@gmail.com">wlaniba330@gmail.com</a></p>
                     </div>
                 </div>
                 <div class="info-block">
@@ -491,9 +491,9 @@
         <div class="footer-links">
             <h4>Get In Touch</h4>
             <ul>
-                <li>📍 123 Coffee Street, SC 12345</li>
-                <li>📞 (555) 123-4567</li>
-                <li>✉️ hello@cozycornercafe.com</li>
+                <li>📍 Cuasi, Loon, Bohol</li>
+                <li>📞 09361679546</li>
+                <li>✉️ wlaniba330@gmail.com</li>
             </ul>
             <div class="footer-staff-link">
                 <a href="../login.html">Staff Login →</a>
@@ -515,8 +515,18 @@
         <span>☕ Café Assistant</span>
         <button id="chatbot-close">✕</button>
     </div>
-    <script async type='module' src='https://interfaces.zapier.com/assets/web-components/zapier-interfaces/zapier-interfaces.esm.js'></script>
-    <zapier-interfaces-chatbot-embed id="zapier-chatbot" is-popup='false' chatbot-id='cmmeirdzh007puwnirm4tjndg' style="width:100%;height:500px;"></zapier-interfaces-chatbot-embed>
+    <div class="chatbot-body">
+        <div id="chatbot-messages" class="chatbot-messages" aria-live="polite"></div>
+        <div class="chatbot-quick-actions" id="chatbot-quick-actions">
+            <button type="button" class="chatbot-chip">What time are you open?</button>
+            <button type="button" class="chatbot-chip">Where are you located?</button>
+            <button type="button" class="chatbot-chip">How do I order pickup?</button>
+        </div>
+        <form id="chatbot-form" class="chatbot-form">
+            <input id="chatbot-input" type="text" maxlength="220" placeholder="Ask about menu, hours, location, or orders..." autocomplete="off" required>
+            <button type="submit" class="chatbot-send">Send</button>
+        </form>
+    </div>
 </div>
 
 <!-- ===== ORDER SUCCESS MODAL ===== -->

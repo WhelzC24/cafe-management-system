@@ -10,6 +10,7 @@
   let cart = {};            // { productId: { product, qty } }
   let activeMenuCat = 'all';
   let activeOrderCat = 'all';
+  let chatHistory = [];
 
   /* ── Utility ────────────────────────────────────────── */
   const $ = id => document.getElementById(id);
@@ -313,20 +314,119 @@
     });
   }
 
-  /* ── Chatbot Toggle ─────────────────────────────────── */
+  /* ── Chatbot Toggle / Messaging ─────────────────────── */
   const chatToggle = $('chatbot-toggle');
   const chatWindow = $('chatbot-window');
   const chatClose = $('chatbot-close');
+  const chatMessages = $('chatbot-messages');
+  const chatForm = $('chatbot-form');
+  const chatInput = $('chatbot-input');
+  const chatQuickActions = $('chatbot-quick-actions');
+
+  function pushChatHistory(role, text) {
+    chatHistory.push({ role, text });
+    if (chatHistory.length > 12) chatHistory = chatHistory.slice(-12);
+  }
+
+  function appendChatMessage(role, text) {
+    if (!chatMessages) return;
+    const item = document.createElement('div');
+    item.className = 'chat-message ' + role;
+    item.textContent = text;
+    chatMessages.appendChild(item);
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+  }
+
+  function localFallbackAnswer(message) {
+    const msg = String(message || '').toLowerCase();
+    if (/hour|open|close|time|schedule/.test(msg)) {
+      return 'We are open Monday-Friday 7:00 AM to 8:00 PM, and Saturday-Sunday 8:00 AM to 9:00 PM.';
+    }
+    if (/where|location|address|find/.test(msg)) {
+      return 'You can find us at Cuasi, Loon, Bohol.';
+    }
+    if (/phone|call|contact/.test(msg)) {
+      return 'You can call us at 09361679546 or email wlaniba330@gmail.com.';
+    }
+    if (/order/.test(msg) && /(status|tracking|track|where|ready|preparing)/.test(msg)) {
+      return 'For order status, please send your order reference number (example: #123) and the phone number you used when ordering.';
+    }
+    if (/email/.test(msg)) {
+      return 'For email, contact us at wlaniba330@gmail.com.';
+    }
+    if (/order|pickup|buy/.test(msg)) {
+      return 'To place an order: open the Order for Pickup section, choose items, enter your details (Full Name and Phone are required; Email is optional), then tap Place My Order.';
+    }
+    if (/menu|coffee|pastr|food|drink/.test(msg)) {
+      return 'Our menu includes coffee, cold drinks, hot drinks, pastries, and food. I can help if you ask for specific item recommendations.';
+    }
+    return 'I can help with menu items, pricing, location, opening hours, and pickup orders. What would you like to know?';
+  }
+
+  async function sendChatMessage(message) {
+    const clean = String(message || '').trim();
+    if (!clean) return;
+    appendChatMessage('user', clean);
+    pushChatHistory('user', clean);
+
+    if (chatInput) chatInput.value = '';
+    if (chatInput) chatInput.disabled = true;
+
+    try {
+      const res = await fetch('chatbot_api.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: clean, history: chatHistory })
+      });
+
+      if (!res.ok) throw new Error('Chat service unavailable');
+      const data = await res.json();
+      const answer = data.answer || localFallbackAnswer(clean);
+      appendChatMessage('bot', answer);
+      pushChatHistory('bot', answer);
+    } catch (err) {
+      const fallback = localFallbackAnswer(clean);
+      appendChatMessage('bot', fallback);
+      pushChatHistory('bot', fallback);
+    } finally {
+      if (chatInput) {
+        chatInput.disabled = false;
+        chatInput.focus();
+      }
+    }
+  }
+
+  if (chatForm) {
+    chatForm.addEventListener('submit', function (e) {
+      e.preventDefault();
+      sendChatMessage(chatInput ? chatInput.value : '');
+    });
+  }
+
+  if (chatQuickActions) {
+    chatQuickActions.addEventListener('click', function (e) {
+      if (!e.target.classList.contains('chatbot-chip')) return;
+      sendChatMessage(e.target.textContent || '');
+    });
+  }
+
   if (chatToggle && chatWindow) {
     chatToggle.addEventListener('click', () => {
       const isOpen = chatWindow.style.display !== 'none';
       chatWindow.style.display = isOpen ? 'none' : 'block';
+      if (!isOpen && chatInput) chatInput.focus();
     });
     if (chatClose) {
       chatClose.addEventListener('click', () => {
         chatWindow.style.display = 'none';
       });
     }
+  }
+
+  if (chatMessages) {
+    const greeting = 'Hi! I am your Cozy Corner assistant. Ask me about our menu, hours, location, or how pickup ordering works.';
+    appendChatMessage('bot', greeting);
+    pushChatHistory('bot', greeting);
   }
 
   /* ── Active Nav Highlighting on scroll ──────────────── */
