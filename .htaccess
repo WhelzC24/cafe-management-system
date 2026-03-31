@@ -1,0 +1,7 @@
+# Cozy Corner Café — Apache overrides
+# Increase upload limits so larger product images (e.g. PNG) can be saved
+
+php_value upload_max_filesize 20M
+php_value post_max_size 24M
+php_value memory_limit 256M
+php_value max_execution_time 60

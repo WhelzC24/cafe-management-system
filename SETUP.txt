@@ -1,0 +1,173 @@
+====================================================
+  COZY CORNER CAFÉ — Setup Guide
+====================================================
+
+REQUIREMENTS
+------------
+- PHP 7.4+ with mysqli and fileinfo extensions
+- MySQL 5.7+ or MariaDB 10.3+
+- Web server: Apache or Nginx
+- Writable uploads/ folder (chmod 755)
+
+----------------------------------------------------
+QUICK START
+----------------------------------------------------
+
+1. PLACE FILES
+   Copy all files into your web root, e.g.:
+     /htdocs/activity/          (XAMPP)
+     /var/www/html/activity/    (Linux Apache)
+
+   Folder structure must stay:
+     activity/
+       cafe/           ← public customer website
+       img/            ← chatbot GIF
+       uploads/        ← product image uploads (must be writable)
+       db.php
+       *.php           ← staff/admin backend
+       style.css       ← admin/staff styles
+
+2. IMPORT DATABASE
+   Run in MySQL:
+     mysql -u root -p < database.sql
+
+   Or in phpMyAdmin: Import → choose database.sql
+
+   This creates the 'web_system' database with all
+   tables, the admin account, and 16 sample products.
+
+3. CONFIGURE DATABASE (if needed)
+   Edit db.php OR set environment variables:
+     DB_HOST = localhost
+     DB_USER = root
+     DB_PASS = (your password)
+     DB_NAME = web_system
+     DB_PORT = 3306
+
+4. SET UPLOADS PERMISSIONS
+   chmod 755 uploads/
+   (Apache/Nginx must be able to write to this folder)
+
+5. VISIT THE SITE
+   Customer site:  http://localhost/activity/cafe/index.html
+   Staff login:    http://localhost/activity/login.html
+
+----------------------------------------------------
+DEFAULT ADMIN ACCOUNT
+----------------------------------------------------
+  Username : admin
+  Password : admin123
+
+  ⚠ CHANGE THIS PASSWORD IMMEDIATELY AFTER SETUP.
+    Go to login → Admin Dashboard → Change Password
+
+----------------------------------------------------
+FEATURES
+----------------------------------------------------
+
+PUBLIC CAFÉ WEBSITE  (cafe/index.html)
+  ✓ Full hero with animated background photo
+  ✓ Today's Specials section
+  ✓ Live menu from database with category filters
+  ✓ Real product photos (Unsplash URLs + local uploads)
+  ✓ Online order-for-pickup (no account needed)
+  ✓ Cart with +/- quantity controls and summary
+  ✓ Order success modal with order reference number
+  ✓ About section with story, images, stats card
+  ✓ Photo gallery
+  ✓ Customer testimonials
+  ✓ Hours & location with embedded Google Map
+  ✓ Contact form
+  ✓ Newsletter signup
+  ✓ Chatbot widget (Zapier-powered)
+  ✓ Sticky responsive navigation + mobile hamburger
+  ✓ Scroll-spy active nav highlighting
+
+STAFF LOGIN  (login.html → login.php)
+  ✓ Split-panel design with café photo
+  ✓ Error message display
+  ✓ Animated loading transition after login
+  ✓ Redirects: admin → Admin Dashboard
+                staff (first login) → Change Password
+                staff → Store Dashboard
+
+CHANGE PASSWORD  (change_password.php)
+  ✓ Password strength meter
+  ✓ Forced change on first login (no current-pw needed)
+  ✓ Current password verification for voluntary change
+  ✓ AJAX submission with instant feedback
+
+STORE DASHBOARD  (store_dashboard.php) — Admin + Staff
+  Orders Tab:
+    ✓ Live queue of last 50 orders
+    ✓ Status dropdown per order (pending/preparing/ready/completed/cancelled)
+    ✓ ✓ Process button marks order completed
+    ✓ Auto-refreshes every 60s (pauses if editing a product)
+    ✓ Toast alerts for all actions
+
+  Products Tab:
+    ✓ Table with photo thumbnail, name, category, price
+    ✓ Quick availability toggle (show/hide on menu)
+    ✓ ✏ Edit button — loads product into Add/Edit tab
+    ✓ 🗑 Delete button — deletes DB record + uploaded file
+
+  Add/Edit Product Tab:
+    ✓ Name, Category, Price, Availability, Description fields
+    ✓ Product Image — two modes:
+        📁 Upload File — drag & drop or click to browse
+           (JPG, PNG, GIF, WEBP; max 5 MB)
+           (MIME type validated server-side)
+        🔗 Use URL — paste any https:// image link
+           (live preview as you type)
+    ✓ Existing image shown with Remove button
+    ✓ Remove button actually removes on save ← FIXED
+    ✓ URL tab auto-activates when editing URL product ← FIXED
+    ✓ Scrolls to form after clicking Edit ← FIXED
+    ✓ Cancel button returns to product list
+
+ADMIN DASHBOARD  (admin_dashboard.php) — Admin only
+  ✓ Stats: total users, staff, orders, today's orders
+  ✓ Full users table with Edit and Reset Password buttons
+  ✓ Reset password sets to "12345" + forces change on login
+  ✓ Cannot reset own or another admin's password
+
+STAFF MANAGEMENT  (staff_management.php) — Admin only
+  ✓ Create staff accounts with temporary password
+  ✓ Staff must change password on first login
+  ✓ Password strength indicator + show/hide toggle
+  ✓ List of all staff with password-change status
+  ✓ Edit and Reset PW buttons on each staff member
+
+----------------------------------------------------
+USER ROLES
+----------------------------------------------------
+  admin  → All pages: Admin Dashboard, Staff Management, Store
+  staff  → Store Dashboard only (products + orders)
+
+----------------------------------------------------
+IMAGE STORAGE
+----------------------------------------------------
+  Local uploads  → stored in uploads/ folder
+                   path in DB: "uploads/filename.jpg"
+                   served from: /activity/uploads/filename.jpg
+                   API serves:  ../uploads/filename.jpg (from cafe/)
+
+  External URLs  → stored as full URL in DB
+                   served directly by browser
+
+  Remove image   → checked remove_image=1 flag on save
+                   deletes local file if applicable
+
+----------------------------------------------------
+SECURITY
+----------------------------------------------------
+  ✓ CSRF tokens on all forms
+  ✓ bcrypt password hashing (PASSWORD_DEFAULT)
+  ✓ Prepared statements — no SQL injection
+  ✓ htmlspecialchars on all output
+  ✓ MIME type validation on uploads (not just extension)
+  ✓ uploads/.htaccess blocks PHP execution
+  ✓ Admin-only guards on staff/admin pages
+  ✓ Passwords never stored in plain text
+
+====================================================

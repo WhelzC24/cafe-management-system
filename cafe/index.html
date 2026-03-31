@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cozy Corner Café — Premium Coffee & Pastries</title>
+    <meta name="description" content="Cozy Corner Café serves premium specialty coffee, fresh-baked pastries, and light meals in a warm and welcoming atmosphere. Order online for pickup.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<!-- ===== NAVIGATION ===== -->
+<header class="site-header" id="siteHeader">
+    <div class="nav-container">
+        <a href="#home" class="logo">
+            <span class="logo-icon">☕</span>
+            <span class="logo-text">Cozy Corner<em>Café</em></span>
+        </a>
+        <nav class="main-nav" id="mainNav">
+            <ul>
+                <li><a href="#home" class="nav-link">Home</a></li>
+                <li><a href="#menu" class="nav-link">Menu</a></li>
+                <li><a href="#specials" class="nav-link">Specials</a></li>
+                <li><a href="#about" class="nav-link">About</a></li>
+                <li><a href="#gallery" class="nav-link">Gallery</a></li>
+                <li><a href="#contact" class="nav-link">Contact</a></li>
+                <li><a href="#order" class="nav-link nav-order-btn">Order Now</a></li>
+                <li><a href="../login.html" class="nav-link nav-staff-btn">Staff Login</a></li>
+            </ul>
+        </nav>
+        <button class="hamburger" id="hamburger" aria-label="Toggle Menu">
+            <span></span><span></span><span></span>
+        </button>
+    </div>
+</header>
+
+<!-- ===== HERO ===== -->
+<section id="home" class="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-overlay"></div>
+    <div class="hero-content">
+        <p class="hero-eyebrow">Est. 2026 · Specialty Coffee</p>
+        <h1 class="hero-title">Where Every Cup<br><em>Tells a Story</em></h1>
+        <p class="hero-subtitle">Handcrafted coffee, fresh-baked pastries, and warm conversations — your perfect third place awaits.</p>
+        <div class="hero-actions">
+            <a href="#menu" class="btn btn-primary">Explore Our Menu</a>
+            <a href="#order" class="btn btn-ghost">Order for Pickup</a>
+        </div>
+        <div class="hero-badges">
+            <div class="badge">⭐ 4.9 Rating</div>
+            <div class="badge">🌱 Ethically Sourced</div>
+            <div class="badge">🥐 Baked Daily</div>
+        </div>
+    </div>
+    <div class="hero-scroll-hint">
+        <span>Scroll to explore</span>
+        <div class="scroll-arrow"></div>
+    </div>
+</section>
+
+<!-- ===== HIGHLIGHTS BAR ===== -->
+<section class="highlights-bar">
+    <div class="highlights-container">
+        <div class="highlight-item">
+            <span class="hi-icon">☕</span>
+            <div>
+                <strong>Premium Beans</strong>
+                <span>Single-origin, direct trade</span>
+            </div>
+        </div>
+        <div class="highlight-item">
+            <span class="hi-icon">🥐</span>
+            <div>
+                <strong>Baked Fresh Daily</strong>
+                <span>Pastries from scratch every morning</span>
+            </div>
+        </div>
+        <div class="highlight-item">
+            <span class="hi-icon">🕐</span>
+            <div>
+                <strong>Open Daily</strong>
+                <span>Mon–Fri 7AM–8PM · Sat–Sun 8AM–9PM</span>
+            </div>
+        </div>
+        <div class="highlight-item">
+            <span class="hi-icon">📍</span>
+            <div>
+                <strong>Find Us</strong>
+                <span>123 Coffee Street, Sweet City</span>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ===== SPECIALS ===== -->
+<section id="specials" class="specials">
+    <div class="section-container">
+        <div class="section-header">
+            <p class="section-eyebrow">Today's Picks</p>
+            <h2 class="section-title">Chef's Specials</h2>
+            <p class="section-desc">Handpicked favorites that our regulars swear by. Limited quantities — first come, first served.</p>
+        </div>
+        <div class="specials-grid">
+            <div class="special-card featured">
+                <div class="special-img-wrap">
+                    <img src="https://images.unsplash.com/photo-1534778101976-62847782c213?w=800&q=80" alt="Cappuccino" loading="lazy">
+                    <span class="special-tag">☕ Staff Favorite</span>
+                </div>
+                <div class="special-body">
+                    <h3>Signature Cappuccino</h3>
+                    <p>Our baristas hand-craft each cup with our house blend espresso and perfectly steamed microfoam. A ritual worth savoring.</p>
+                    <div class="special-footer">
+                        <span class="special-price">₱180</span>
+                        <a href="#order" class="btn btn-sm">Order Now</a>
+                    </div>
+                </div>
+            </div>
+            <div class="special-card">
+                <div class="special-img-wrap">
+                    <img src="https://www.abakingjourney.com/wp-content/uploads/2022/11/Coffee-Cinnamon-Rolls-Feature1.jpg" alt="Cinnamon Roll" loading="lazy">
+                    <span class="special-tag">🔥 Bestseller</span>
+                </div>
+                <div class="special-body">
+                    <h3>Cinnamon Roll</h3>
+                    <p>Warm from the oven, swirled with brown sugar and glazed with cream cheese frosting.</p>
+                    <div class="special-footer">
+                        <span class="special-price">₱200</span>
+                        <a href="#order" class="btn btn-sm">Order Now</a>
+                    </div>
+                </div>
+            </div>
+            <div class="special-card">
+                <div class="special-img-wrap">
+                    <img src="https://images.unsplash.com/photo-1515823064-d6e0c04616a7?w=600&q=80" alt="Matcha Latte" loading="lazy">
+                    <span class="special-tag">🌿 New</span>
+                </div>
+                <div class="special-body">
+                    <h3>Iced Matcha Latte</h3>
+                    <p>Ceremonial-grade matcha whisked smooth with oat milk and served over crystal clear ice.</p>
+                    <div class="special-footer">
+                        <span class="special-price">₱250</span>
+                        <a href="#order" class="btn btn-sm">Order Now</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ===== MENU ===== -->
+<section id="menu" class="menu-section">
+    <div class="section-container">
+        <div class="section-header">
+            <p class="section-eyebrow">What We Offer</p>
+            <h2 class="section-title">Our Full Menu</h2>
+            <p class="section-desc">From the first sip to the last bite — everything made with care and the finest ingredients.</p>
+        </div>
+        <div class="menu-filter-bar">
+            <button class="filter-btn active" data-cat="all">All Items</button>
+            <button class="filter-btn" data-cat="Coffee">☕ Coffee</button>
+            <button class="filter-btn" data-cat="Cold Drinks">🧊 Cold Drinks</button>
+            <button class="filter-btn" data-cat="Hot Drinks">🍵 Hot Drinks</button>
+            <button class="filter-btn" data-cat="Pastries">🥐 Pastries</button>
+            <button class="filter-btn" data-cat="Food">🥪 Food</button>
+        </div>
+        <div class="menu-grid" id="menuGrid">
+            <div class="menu-loading">
+                <div class="loader"></div>
+                <p>Loading fresh menu…</p>
+            </div>
+        </div>
+        <div class="menu-cta">
+            <a href="#order" class="btn btn-primary">Order Your Favorites →</a>
+        </div>
+    </div>
+</section>
+
+<!-- ===== ABOUT ===== -->
+<section id="about" class="about-section">
+    <div class="about-inner">
+        <div class="about-image-side">
+            <div class="about-img-main">
+                <img src="https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?w=800&q=80" alt="Inside Cozy Corner Café" loading="lazy">
+            </div>
+            <div class="about-img-accent">
+                <img src="https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=400&q=80" alt="Coffee preparation" loading="lazy">
+            </div>
+            <div class="about-stat-card">
+                <strong>10+</strong>
+                <span>Years Serving<br>Our Community</span>
+            </div>
+        </div>
+        <div class="about-text-side">
+            <p class="section-eyebrow">Our Story</p>
+            <h2 class="section-title">A Café Born from Passion</h2>
+            <p>In 2026, we opened Cozy Corner Café with a simple belief: great coffee should be paired with genuine warmth. We started as a small corner shop with two espresso machines and a dream.</p>
+            <p>Today, we're a beloved community hub where regulars know each other by name, first-time visitors feel like family, and every cup is crafted by baristas who genuinely love their craft.</p>
+            <div class="about-features">
+                <div class="about-feat">
+                    <span class="feat-icon">🌍</span>
+                    <div>
+                        <h4>Ethically Sourced</h4>
+                        <p>Direct-trade beans from sustainable farms in Colombia, Ethiopia, and Guatemala.</p>
+                    </div>
+                </div>
+                <div class="about-feat">
+                    <span class="feat-icon">👨‍🍳</span>
+                    <div>
+                        <h4>Scratch Kitchen</h4>
+                        <p>Every pastry is baked on-site from scratch each morning by our in-house bakers.</p>
+                    </div>
+                </div>
+                <div class="about-feat">
+                    <span class="feat-icon">🏡</span>
+                    <div>
+                        <h4>Community First</h4>
+                        <p>We host local events, support nearby artists, and champion neighborhood causes.</p>
+                    </div>
+                </div>
+            </div>
+            <a href="#contact" class="btn btn-primary">Visit Us Today</a>
+        </div>
+    </div>
+</section>
+
+<!-- ===== GALLERY ===== -->
+<section id="gallery" class="gallery-section">
+    <div class="section-container">
+        <div class="section-header">
+            <p class="section-eyebrow">Moments at the Café</p>
+            <h2 class="section-title">Gallery</h2>
+        </div>
+        <div class="gallery-grid">
+            <div class="gallery-item gi-large">
+                <img src="https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?w=900&q=80" alt="Café interior" loading="lazy">
+            </div>
+            <div class="gallery-item">
+                <img src="https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=500&q=80" alt="Coffee being made" loading="lazy">
+            </div>
+            <div class="gallery-item">
+                <img src="https://images.unsplash.com/photo-1555507036-ab1f4038808a?w=500&q=80" alt="Fresh croissants" loading="lazy">
+            </div>
+            <div class="gallery-item">
+                <img src="https://images.unsplash.com/photo-1461023058943-07fcbe16d735?w=500&q=80" alt="Iced coffee" loading="lazy">
+            </div>
+            <div class="gallery-item">
+                <img src="https://images.unsplash.com/photo-1534778101976-62847782c213?w=500&q=80" alt="Cappuccino art" loading="lazy">
+            </div>
+            <div class="gallery-item gi-wide">
+                <img src="https://images.unsplash.com/photo-1442512595331-e89e73853f31?w=900&q=80" alt="Café counter" loading="lazy">
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ===== TESTIMONIALS ===== -->
+<section class="testimonials-section">
+    <div class="section-container">
+        <div class="section-header light">
+            <p class="section-eyebrow">What People Say</p>
+            <h2 class="section-title">Loved by Our Community</h2>
+        </div>
+        <div class="testimonials-grid">
+            <div class="testimonial-card">
+                <div class="stars">★★★★★</div>
+                <p>"The cappuccino here is genuinely the best I've had outside of Italy. The baristas clearly take their craft seriously — every cup is perfect."</p>
+                <div class="reviewer">
+                    <div class="reviewer-avatar">MR</div>
+                    <div>
+                        <strong>Maria R.</strong>
+                        <span>Regular Customer</span>
+                    </div>
+                </div>
+            </div>
+            <div class="testimonial-card featured-review">
+                <div class="stars">★★★★★</div>
+                <p>"I've been coming here for work meetings every Tuesday for two years. The atmosphere is perfect — cozy but not too quiet — and the cinnamon rolls are dangerous."</p>
+                <div class="reviewer">
+                    <div class="reviewer-avatar">JC</div>
+                    <div>
+                        <strong>James C.</strong>
+                        <span>Freelancer & Regular</span>
+                    </div>
+                </div>
+            </div>
+            <div class="testimonial-card">
+                <div class="stars">★★★★★</div>
+                <p>"Found this place by accident and now it's my weekend ritual. The matcha latte converted me from a coffee purist. I have zero regrets."</p>
+                <div class="reviewer">
+                    <div class="reviewer-avatar">AL</div>
+                    <div>
+                        <strong>Ana L.</strong>
+                        <span>Food Blogger</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ===== ORDER SECTION ===== -->
+<section id="order" class="order-section">
+    <div class="section-container">
+        <div class="section-header">
+            <p class="section-eyebrow">Skip the Queue</p>
+            <h2 class="section-title">Order for Pickup</h2>
+            <p class="section-desc">Choose your items, enter your details, and we'll have your order ready when you arrive.</p>
+        </div>
+        <div class="order-layout">
+            <div class="order-items-panel">
+                <h3>Choose Your Items</h3>
+                <div class="order-filter-bar">
+                    <button class="order-filter active" data-ocat="all">All</button>
+                    <button class="order-filter" data-ocat="Coffee">Coffee</button>
+                    <button class="order-filter" data-ocat="Cold Drinks">Cold</button>
+                    <button class="order-filter" data-ocat="Hot Drinks">Hot</button>
+                    <button class="order-filter" data-ocat="Pastries">Pastries</button>
+                    <button class="order-filter" data-ocat="Food">Food</button>
+                </div>
+                <div class="order-product-list" id="orderProductList">
+                    <div class="menu-loading"><div class="loader"></div><p>Loading…</p></div>
+                </div>
+                <div class="order-cart-summary" id="cartSummary" style="display:none;">
+                    <h4>Your Cart</h4>
+                    <div id="cartItems"></div>
+                    <div class="cart-total">
+                        <span>Total:</span>
+                        <strong id="cartTotal">₱0.00</strong>
+                    </div>
+                </div>
+            </div>
+            <div class="order-form-panel">
+                <h3>Your Details</h3>
+                <p class="form-note">No account needed — just tell us who you are and we'll prepare your order.</p>
+                <div id="orderFeedback"></div>
+                <form id="customerOrderForm" class="order-form" novalidate>
+                    <div class="form-group">
+                        <label for="customerName">Full Name *</label>
+                        <input type="text" id="customerName" placeholder="e.g. Maria Santos" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="customerEmail">Email <span class="optional">(optional)</span></label>
+                        <input type="email" id="customerEmail" placeholder="you@example.com">
+                    </div>
+                    <div class="form-group">
+                        <label for="customerPhone">Phone Number *</label>
+                        <input type="tel" id="customerPhone" placeholder="e.g. 0917 123 4567" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="customerNotes">Special Instructions</label>
+                        <textarea id="customerNotes" rows="4" placeholder="Allergies, pickup time, customizations…"></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-full" id="orderSubmitBtn">
+                        <span>Place My Order</span>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ===== HOURS & LOCATION ===== -->
+<section id="contact" class="contact-section">
+    <div class="section-container">
+        <div class="section-header">
+            <p class="section-eyebrow">Come Visit Us</p>
+            <h2 class="section-title">Hours & Location</h2>
+        </div>
+        <div class="contact-grid">
+            <div class="contact-info-panel">
+                <div class="info-block">
+                    <span class="info-icon">📍</span>
+                    <div>
+                        <h4>Address</h4>
+                        <p>123 Coffee Street<br>Sweet City, SC 12345</p>
+                    </div>
+                </div>
+                <div class="info-block">
+                    <span class="info-icon">📞</span>
+                    <div>
+                        <h4>Phone</h4>
+                        <p><a href="tel:+15551234567">(555) 123-4567</a></p>
+                    </div>
+                </div>
+                <div class="info-block">
+                    <span class="info-icon">✉️</span>
+                    <div>
+                        <h4>Email</h4>
+                        <p><a href="mailto:hello@cozycornercafe.com">hello@cozycornercafe.com</a></p>
+                    </div>
+                </div>
+                <div class="info-block">
+                    <span class="info-icon">🕐</span>
+                    <div>
+                        <h4>Opening Hours</h4>
+                        <div class="hours-table">
+                            <div class="hours-row">
+                                <span>Monday – Friday</span>
+                                <span>7:00 AM – 8:00 PM</span>
+                            </div>
+                            <div class="hours-row">
+                                <span>Saturday</span>
+                                <span>8:00 AM – 9:00 PM</span>
+                            </div>
+                            <div class="hours-row">
+                                <span>Sunday</span>
+                                <span>8:00 AM – 9:00 PM</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="social-links-row">
+                    <a href="#" class="social-btn" aria-label="Facebook">
+                        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z"/></svg>
+                    </a>
+                    <a href="#" class="social-btn" aria-label="Instagram">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+                    </a>
+                    <a href="#" class="social-btn" aria-label="Twitter/X">
+                        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+                    </a>
+                </div>
+            </div>
+            <div class="contact-form-panel">
+                <h3>Send Us a Message</h3>
+                <form id="contactForm" class="contact-form">
+                    <div class="form-group">
+                        <label for="contactName">Name</label>
+                        <input type="text" id="contactName" placeholder="Your name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="contactEmail">Email</label>
+                        <input type="email" id="contactEmail" placeholder="your@email.com" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="contactMsg">Message</label>
+                        <textarea id="contactMsg" rows="5" placeholder="Say hello, ask a question, give feedback…" required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-full">Send Message</button>
+                    <div id="contactFeedback" class="form-feedback"></div>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ===== NEWSLETTER ===== -->
+<section class="newsletter-section">
+    <div class="newsletter-inner">
+        <div class="newsletter-text">
+            <h2>Stay in the Loop</h2>
+            <p>Get early access to seasonal menus, special offers, and café events delivered to your inbox.</p>
+        </div>
+        <form class="newsletter-form" id="newsletterForm">
+            <input type="email" placeholder="Enter your email address" required>
+            <button type="submit" class="btn btn-primary">Subscribe</button>
+        </form>
+        <div id="newsletterFeedback" class="form-feedback"></div>
+    </div>
+</section>
+
+<!-- ===== FOOTER ===== -->
+<footer class="site-footer">
+    <div class="footer-inner">
+        <div class="footer-brand">
+            <span class="logo-icon">☕</span>
+            <span class="logo-text">Cozy Corner<em>Café</em></span>
+            <p>Your neighborhood spot for premium coffee, fresh pastries, and genuine hospitality since 2026.</p>
+        </div>
+        <div class="footer-links">
+            <h4>Quick Links</h4>
+            <ul>
+                <li><a href="#home">Home</a></li>
+                <li><a href="#menu">Menu</a></li>
+                <li><a href="#order">Order Pickup</a></li>
+                <li><a href="#about">About Us</a></li>
+                <li><a href="#contact">Contact</a></li>
+            </ul>
+        </div>
+        <div class="footer-links">
+            <h4>Opening Hours</h4>
+            <ul>
+                <li>Mon – Fri: 7:00 AM – 8:00 PM</li>
+                <li>Saturday: 8:00 AM – 9:00 PM</li>
+                <li>Sunday: 8:00 AM – 9:00 PM</li>
+            </ul>
+        </div>
+        <div class="footer-links">
+            <h4>Get In Touch</h4>
+            <ul>
+                <li>📍 123 Coffee Street, SC 12345</li>
+                <li>📞 (555) 123-4567</li>
+                <li>✉️ hello@cozycornercafe.com</li>
+            </ul>
+            <div class="footer-staff-link">
+                <a href="../login.html">Staff Login →</a>
+            </div>
+        </div>
+    </div>
+    <div class="footer-bottom">
+        <p>&copy; 2026 Cozy Corner Café. All rights reserved. Made with ❤️ for coffee lovers.</p>
+    </div>
+</footer>
+
+<!-- ===== CHATBOT ===== -->
+<div id="chatbot-toggle" title="Chat with us">
+    <img src="../img/chatbot_avatar.gif" alt="Chat" id="chatbot-avatar">
+    <span class="chatbot-pulse"></span>
+</div>
+<div id="chatbot-window" style="display:none;">
+    <div class="chatbot-header">
+        <span>☕ Café Assistant</span>
+        <button id="chatbot-close">✕</button>
+    </div>
+    <script async type='module' src='https://interfaces.zapier.com/assets/web-components/zapier-interfaces/zapier-interfaces.esm.js'></script>
+    <zapier-interfaces-chatbot-embed id="zapier-chatbot" is-popup='false' chatbot-id='cmmeirdzh007puwnirm4tjndg' style="width:100%;height:500px;"></zapier-interfaces-chatbot-embed>
+</div>
+
+<!-- ===== ORDER SUCCESS MODAL ===== -->
+<div id="orderModal" class="modal-overlay" style="display:none;">
+    <div class="modal-box">
+        <div class="modal-icon">✅</div>
+        <h3>Order Placed!</h3>
+        <p id="modalMessage">Your order has been received. We'll have it ready for pickup soon!</p>
+        <button class="btn btn-primary" id="modalClose">Great, Thanks!</button>
+    </div>
+</div>
+
+<script src="store.js"></script>
+</body>
+</html>

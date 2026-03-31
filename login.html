@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Staff Login — Cozy Corner Café</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+        }
+        /* Left panel — image */
+        .login-visual {
+            background: url('https://images.unsplash.com/photo-1442512595331-e89e73853f31?w=1200&q=80') center/cover no-repeat;
+            position: relative;
+            overflow: hidden;
+        }
+        .login-visual::after {
+            content: '';
+            position: absolute; inset: 0;
+            background: linear-gradient(160deg, rgba(30,10,0,0.6), rgba(107,58,42,0.75));
+        }
+        .visual-content {
+            position: relative; z-index: 1;
+            height: 100%;
+            display: flex; flex-direction: column;
+            justify-content: flex-end;
+            padding: 3rem;
+            color: #fff;
+        }
+        .visual-logo {
+            position: absolute; top: 2rem; left: 3rem;
+            font-family: 'Playfair Display', serif;
+            font-size: 1.4rem;
+            color: #fff;
+            display: flex; align-items: center; gap: 0.5rem;
+        }
+        .visual-logo em { font-style: italic; opacity: 0.8; }
+        .visual-quote {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.8rem;
+            line-height: 1.4;
+            margin-bottom: 0.75rem;
+        }
+        .visual-sub { font-size: 0.9rem; opacity: 0.7; }
+        /* Right panel — form */
+        .login-form-panel {
+            display: flex; flex-direction: column;
+            justify-content: center; align-items: center;
+            padding: 3rem 4rem;
+            background: #FFFBF7;
+        }
+        .form-container { width: 100%; max-width: 380px; }
+        .back-link {
+            display: inline-flex; align-items: center; gap: 0.4rem;
+            color: #7D6350; font-size: 0.82rem;
+            text-decoration: none; margin-bottom: 2.5rem;
+            transition: color 0.2s;
+        }
+        .back-link:hover { color: #3E1F0A; }
+        .form-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 2rem; color: #3E1F0A;
+            margin-bottom: 0.4rem;
+        }
+        .form-sub { color: #7D6350; font-size: 0.9rem; margin-bottom: 2rem; }
+        .field { margin-bottom: 1.1rem; }
+        .field label {
+            display: block; font-size: 0.82rem; font-weight: 500;
+            color: #4A3728; margin-bottom: 0.35rem;
+        }
+        .field input {
+            width: 100%; padding: 0.8rem 1rem;
+            border: 1.5px solid #E8D9C4;
+            border-radius: 8px; font-size: 0.95rem;
+            background: #fff; color: #1A0F0A;
+            outline: none; transition: border-color 0.2s;
+        }
+        .field input:focus { border-color: #8B4513; }
+        .submit-btn {
+            width: 100%; padding: 0.9rem;
+            background: #8B4513; color: #fff;
+            border: none; border-radius: 8px;
+            font-size: 1rem; font-weight: 600;
+            cursor: pointer; margin-top: 0.5rem;
+            transition: background 0.2s, transform 0.2s;
+        }
+        .submit-btn:hover { background: #3E1F0A; transform: translateY(-1px); }
+        .error-box {
+            background: #fee2e2; color: #991b1b;
+            border-radius: 8px; padding: 0.8rem 1rem;
+            font-size: 0.88rem; margin-bottom: 1.2rem;
+            display: none;
+        }
+        .error-box.show { display: block; }
+        .form-footer { margin-top: 2rem; text-align: center; }
+        .form-footer a { color: #8B4513; font-size: 0.85rem; text-decoration: none; }
+        .form-footer a:hover { text-decoration: underline; }
+        .divider { border: none; border-top: 1px solid #E8D9C4; margin: 1.5rem 0; }
+        .cafe-link-row { text-align: center; }
+        .cafe-link-row a {
+            color: #7D6350; font-size: 0.82rem;
+            text-decoration: none; transition: color 0.2s;
+        }
+        .cafe-link-row a:hover { color: #3E1F0A; }
+        @media (max-width: 768px) {
+            body { grid-template-columns: 1fr; }
+            .login-visual { display: none; }
+            .login-form-panel { padding: 3rem 1.5rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="login-visual">
+        <a href="cafe/index.html" class="visual-logo">☕ Cozy Corner<em>Café</em></a>
+        <div class="visual-content">
+            <p class="visual-quote">"Great coffee doesn't<br>make itself."</p>
+            <p class="visual-sub">Staff portal for product management and order processing.</p>
+        </div>
+    </div>
+    <div class="login-form-panel">
+        <div class="form-container">
+            <a href="cafe/index.html" class="back-link">← Back to Café Website</a>
+            <h1 class="form-title">Staff Login</h1>
+            <p class="form-sub">Sign in to manage orders and products.</p>
+
+            <div class="error-box" id="errorBox"></div>
+
+            <form method="POST" action="login.php" id="loginForm">
+                <div class="field">
+                    <label for="username">Username</label>
+                    <input type="text" id="username" name="username" placeholder="Enter your username" required autocomplete="username">
+                </div>
+                <div class="field">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" placeholder="Enter your password" required autocomplete="current-password">
+                </div>
+                <button type="submit" class="submit-btn">Sign In</button>
+            </form>
+            <hr class="divider">
+            <div class="cafe-link-row">
+                <a href="cafe/index.html">☕ View Café Website</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const params = new URLSearchParams(window.location.search);
+        const err = params.get('error');
+        if (err) {
+            const box = document.getElementById('errorBox');
+            box.textContent = decodeURIComponent(err);
+            box.classList.add('show');
+        }
+    </script>
+</body>
+</html>
