@@ -36,8 +36,10 @@ A full-featured, web-based café management system built with vanilla PHP and My
 - Live menu browsing with category filters (Coffee, Cold Drinks, Hot Drinks, Pastries, Food, Other)
 - Shopping cart with real-time quantity management and ₱ price totals
 - **Order for Pickup** — customers submit orders without creating an account
-- Integrated chatbot widget (Zapier-powered)
+- Built-in **chatbot widget** backed by `chatbot_api.php` — answers questions about the menu, pricing, hours, location, and how to place a pickup order; also lets customers **look up live order status** by reference number + phone/email verification
 - Google Maps embed for location/hours
+- Newsletter signup form and contact form
+- Footer with social media links (Facebook, Instagram, Twitter/X)
 
 ### 🧑‍💼 Staff Dashboard (`/store_dashboard.php`)
 - **Orders Queue** — real-time list of the last 50 orders with status management (`pending → preparing → ready → completed/cancelled`)
@@ -85,7 +87,8 @@ cafe-management-system/
 │   ├── styles.css               # Public site stylesheet
 │   ├── store.js                 # Cart logic & order submission
 │   ├── products_api.php         # GET: returns available products as JSON
-│   └── submit_order.php         # POST: saves a customer order
+│   ├── submit_order.php         # POST: saves a customer order
+│   └── chatbot_api.php          # POST: rule-based chatbot with live order lookup
 ├── database/
 │   └── database.sql             # Full schema + sample data
 ├── uploads/                     # Uploaded product images (writable)
@@ -269,6 +272,7 @@ New staff accounts created by an admin are assigned the temporary password `1234
 |---|---|---|---|
 | `GET` | `/cafe/products_api.php` | Returns all available products | `JSON` array |
 | `POST` | `/cafe/submit_order.php` | Submits a customer order | `JSON {success, order_id}` |
+| `POST` | `/cafe/chatbot_api.php` | Chatbot query — answers menu, hours, location, and order-status questions | `JSON {answer}` |
 
 **`submit_order.php` request body (JSON):**
 ```json
@@ -282,6 +286,9 @@ New staff accounts created by an admin are assigned the temporary password `1234
   ],
   "total": "150.00"
 }
+```
+
+> `name`, `phone`, and `items` are required. `email` and `notes` are optional.
 ```
 
 ### Staff / Admin (Session Required)
