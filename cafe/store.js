@@ -328,13 +328,48 @@
     if (chatHistory.length > 12) chatHistory = chatHistory.slice(-12);
   }
 
-  function appendChatMessage(role, text) {
+  function appendChatMessage(role, text, showTime = true) {
     if (!chatMessages) return;
+    // Clear empty state if exists
+    const emptyState = chatMessages.querySelector('.chat-messages-empty');
+    if (emptyState) emptyState.remove();
+    
     const item = document.createElement('div');
     item.className = 'chat-message ' + role;
-    item.textContent = text;
+    
+    const textSpan = document.createElement('span');
+    textSpan.textContent = text;
+    item.appendChild(textSpan);
+    
+    if (showTime) {
+      const timeSpan = document.createElement('span');
+      timeSpan.className = 'chat-message-time';
+      const now = new Date();
+      timeSpan.textContent = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      item.appendChild(timeSpan);
+    }
+    
     chatMessages.appendChild(item);
     chatMessages.scrollTop = chatMessages.scrollHeight;
+  }
+
+  function showTypingIndicator() {
+    if (!chatMessages) return;
+    // Remove existing typing indicator
+    const existing = chatMessages.querySelector('.chat-typing');
+    if (existing) existing.remove();
+    
+    const typing = document.createElement('div');
+    typing.className = 'chat-typing';
+    typing.id = 'chat-typing-indicator';
+    typing.innerHTML = '<span class="chat-typing-dot"></span><span class="chat-typing-dot"></span><span class="chat-typing-dot"></span>';
+    chatMessages.appendChild(typing);
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+  }
+
+  function hideTypingIndicator() {
+    const typing = $('chat-typing-indicator');
+    if (typing) typing.remove();
   }
 
   function localFallbackAnswer(message) {
@@ -371,8 +406,19 @@
 
     if (chatInput) chatInput.value = '';
     if (chatInput) chatInput.disabled = true;
+    const sendBtn = document.querySelector('.chatbot-send');
+    if (sendBtn) sendBtn.disabled = true;
+
+    // Show typing indicator
+    showTypingIndicator();
+
+    // Simulate realistic typing delay (800-1500ms)
+    const typingDelay = 800 + Math.random() * 700;
 
     try {
+      // Add delay for better UX
+      await new Promise(resolve => setTimeout(resolve, typingDelay));
+      
       const res = await fetch('chatbot_api.php', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -382,9 +428,12 @@
       if (!res.ok) throw new Error('Chat service unavailable');
       const data = await res.json();
       const answer = data.answer || localFallbackAnswer(clean);
+      
+      hideTypingIndicator();
       appendChatMessage('bot', answer);
       pushChatHistory('bot', answer);
     } catch (err) {
+      hideTypingIndicator();
       const fallback = localFallbackAnswer(clean);
       appendChatMessage('bot', fallback);
       pushChatHistory('bot', fallback);
@@ -393,6 +442,7 @@
         chatInput.disabled = false;
         chatInput.focus();
       }
+      if (sendBtn) sendBtn.disabled = false;
     }
   }
 
@@ -412,19 +462,23 @@
 
   if (chatToggle && chatWindow) {
     chatToggle.addEventListener('click', () => {
-      const isOpen = chatWindow.style.display !== 'none';
-      chatWindow.style.display = isOpen ? 'none' : 'block';
-      if (!isOpen && chatInput) chatInput.focus();
+      const isOpen = chatWindow.classList.contains('open');
+      if (isOpen) {
+        chatWindow.classList.remove('open');
+      } else {
+        chatWindow.classList.add('open');
+        if (chatInput) chatInput.focus();
+      }
     });
     if (chatClose) {
       chatClose.addEventListener('click', () => {
-        chatWindow.style.display = 'none';
+        chatWindow.classList.remove('open');
       });
     }
   }
 
   if (chatMessages) {
-    const greeting = 'Hi! I am your Cozy Corner assistant. Ask me about our menu, hours, location, or how pickup ordering works.';
+    const greeting = '☕ Welcome to Cozy Corner Café!\n\nI can help you with:\n• Our menu & prices\n• Opening hours & location\n• Placing pickup orders\n• Tracking your order\n\nWhat would you like to know?';
     appendChatMessage('bot', greeting);
     pushChatHistory('bot', greeting);
   }

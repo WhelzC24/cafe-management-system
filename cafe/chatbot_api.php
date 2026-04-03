@@ -239,7 +239,7 @@ if (contains_any($normalized, ['hello', 'hi', 'hey', 'good morning', 'good after
 } elseif (contains_any($normalized, ['phone', 'call', 'contact', 'email'])) {
     $answer = 'Call us at 09361679546 or email wlaniba330@gmail.com.';
 } elseif (contains_any($normalized, ['order', 'pickup', 'place', 'buy'])) {
-    $answer = 'To order for pickup: open the "Order for Pickup" section, choose items, then enter your details (Full Name and Phone are required; Email is optional). Finally, tap "Place My Order".';
+    $answer = 'To order for pickup: go to the Order for Pickup section by clicking the "Order Now" button, choose items, then enter your details (Full Name and Phone are required; Email is optional). Finally, tap "Place My Order".';
 } elseif ($product && contains_any($normalized, ['price', 'cost', 'how much'])) {
     $price = number_format((float)$product['price'], 2);
     $answer = $product['name'] . ' is PHP ' . $price . '.';
