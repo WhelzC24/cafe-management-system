@@ -46,7 +46,8 @@ A full-featured, web-based café management system built with vanilla PHP and My
 - **Product Management** — add, edit, delete products; toggle availability instantly
 - **Product Images** — upload a local file (drag & drop, up to 20 MB) *or* paste an HTTPS URL with a live preview
 - Stats bar showing pending orders, available products, and today's order count
-- Auto-refresh every 60 seconds; pauses during active product editing
+- Auto-refresh every 60 seconds while the Orders tab is active; pauses once text has been entered in the product form so in-progress work is never lost
+- Destructive actions (product delete) use a custom confirmation overlay — compatible with browsers that block native `window.confirm()` dialogs (e.g. Brave with strict shields)
 
 ### 🔐 Admin Panel (`/admin_dashboard.php`)
 - System-wide statistics (users, staff, orders)
@@ -248,7 +249,7 @@ New staff accounts created by an admin are assigned the temporary password `1234
 1. In the Store Dashboard, switch to the **Products** tab.
 2. Toggle the **Available** switch to show/hide an item on the customer menu instantly.
 3. Click **Edit** to load a product into the form — update any field and save.
-4. Click **Delete** to permanently remove a product and its image file.
+4. Click **Delete** to permanently remove a product and its image file. A custom confirmation overlay will appear (works with strict browser privacy modes that block native dialogs).
 
 ### Staff — Adding a Product
 1. Click **Add New Product** (or the **+** button) to open the product form.
@@ -352,23 +353,13 @@ New staff accounts created by an admin are assigned the temporary password `1234
 |---|---|
 | **SQL Injection** | All queries use MySQLi prepared statements with parameter binding |
 | **Password Storage** | bcrypt via `password_hash()` / `password_verify()` (PHP `PASSWORD_DEFAULT`) |
-| **CSRF** | Session-based tokens generated on login; validated on every POST request |
-| **XSS** | All server-rendered output wrapped in `htmlspecialchars()`; client-side `escHtml()` helper |
+| **CSRF** | Session-based tokens generated on login; validated on every POST request; invalid or expired tokens return an error that auto-redirects to the login page |
+| **XSS** | All server-rendered output wrapped in `htmlspecialchars()`; client-side `escHtml()` helper for template literals; `textContent` (never `innerHTML`) used for all dynamic admin panel content |
+| **Error Containment** | Backend API endpoints wrap all logic in `try { … } catch (Throwable $e)` blocks; fatal PHP errors are caught and returned as JSON error responses instead of leaking stack traces |
 | **File Upload Abuse** | Server-side MIME type validation (`fileinfo`); 20 MB size limit; PHP execution blocked in `uploads/` via `.htaccess` |
 | **Access Control** | Session-based authentication; role guard on every protected page; admins cannot reset their own or another admin's password |
 | **Forced Password Change** | New staff accounts have `must_change_password = 1`; system redirects them to the change-password page before any other action. Staff accounts are assigned a fixed temporary password (`12345`) — inform staff to complete this step immediately and avoid leaving the account idle. |
 
-
----
-
-## 📝 Recent Fixes (Changelog)
-
-| Update | Description |
-|---|---|
-| **Custom HTML Modals** | Replaced fragile native `window.confirm()` calls with styled DOM overlays. Bypasses strict browser tracking shields (like Brave) that silently block required dialogs. |
-| **Strict DOM Escaping** | Eliminated raw `addslashes()` in HTML attributes. Migrated to `htmlspecialchars(json_encode())` to enforce strict parsing for dynamic labels. |
-| **Silent API Freezes** | Implemented global `try-catch` backend envelopes (`reset_password.php`) and `.catch()` blocks in JS APIs. Fatal PHP exceptions are properly converted to JSON alerts, and expired CSRF tokens automatically redirect to login. |
-| **Backend State Repair** | Fixed procedural binding logic, correcting `mysqli_stmt_affected_rows($conn)` to accurately target statement objects (`$st`) to prevent persistent HTTP 500 crashes during administration. |
 
 ---
 
