@@ -23,7 +23,7 @@ $new_hash = password_hash('12345', PASSWORD_DEFAULT);
 $st = mysqli_prepare($conn,'UPDATE users SET password=?, must_change_password=1 WHERE id=? AND role != "admin"');
 mysqli_stmt_bind_param($st,'si',$new_hash,$target_id);
 $ok = mysqli_stmt_execute($st);
-$affected = mysqli_stmt_affected_rows($conn);
+$affected = mysqli_stmt_affected_rows($st);
 mysqli_stmt_close($st);
 
 if ($ok && $affected > 0) {
