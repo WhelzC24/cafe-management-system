@@ -361,17 +361,6 @@ New staff accounts created by an admin are assigned the temporary password `1234
 
 ---
 
-## 📝 Recent Fixes (Changelog)
-
-| Update | Description |
-|---|---|
-| **Custom HTML Modals** | Replaced fragile native `window.confirm()` calls with styled DOM overlays. Bypasses strict browser tracking shields (like Brave) that silently block required dialogs. |
-| **Strict DOM Escaping** | Eliminated raw `addslashes()` in HTML attributes. Migrated to `htmlspecialchars(json_encode())` to enforce strict parsing for dynamic labels. |
-| **Silent API Freezes** | Implemented global `try-catch` backend envelopes (`reset_password.php`) and `.catch()` blocks in JS APIs. Fatal PHP exceptions are properly converted to JSON alerts, and expired CSRF tokens automatically redirect to login. |
-| **Backend State Repair** | Fixed procedural binding logic, correcting `mysqli_stmt_affected_rows($conn)` to accurately target statement objects (`$st`) to prevent persistent HTTP 500 crashes during administration. |
-
----
-
 ## 🩺 Troubleshooting
 
 | Problem | Fix |
