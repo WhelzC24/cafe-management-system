@@ -341,7 +341,7 @@ $statuses=['pending','preparing','ready','completed','cancelled'];
                                     <td style="max-width:200px;font-size:.82rem;color:var(--text-light);"><?= htmlspecialchars($p['description']) ?></td>
                                     <td><strong>₱<?= number_format($p['price'],2) ?></strong></td>
                                     <td>
-                                        <button class="avail-toggle <?= $p['is_available']?'on':'off' ?>"
+                                        <button type="button" class="avail-toggle <?= $p['is_available']?'on':'off' ?>"
                                             onclick="toggleAvailability(<?= $p['id'] ?>, this)">
                                             <?= $p['is_available'] ? '✓ Available' : '✗ Hidden' ?>
                                         </button>
@@ -349,7 +349,7 @@ $statuses=['pending','preparing','ready','completed','cancelled'];
                                     <td class="action-cell">
                                         <div class="action-buttons">
                                             <a href="?edit_product=<?= $p['id'] ?>" class="edit-btn">✏️ Edit</a>
-                                            <button class="delete-btn" onclick="deleteProduct(<?= $p['id'] ?>, '<?= addslashes($p['name']) ?>')">🗑 Delete</button>
+                                            <button type="button" class="delete-btn" onclick="deleteProduct(<?= $p['id'] ?>, <?= htmlspecialchars(json_encode($p['name']), ENT_QUOTES, 'UTF-8') ?>, this)">🗑 Delete</button>
                                         </div>
                                     </td>
                                 </tr>
@@ -728,21 +728,84 @@ function toggleAvailability(id, btn) {
     });
 }
 
+/* Custom Delete Modal */
+function showConfirmModal(title, message, onConfirm) {
+    const existing = document.getElementById('customConfirmModal');
+    if (existing) existing.remove();
+
+    const overlay = document.createElement('div');
+    overlay.id = 'customConfirmModal';
+    overlay.style.cssText = 'position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.5); z-index: 10000; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(2px);';
+
+    const box = document.createElement('div');
+    box.style.cssText = 'background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); text-align: center; max-width: 400px; width: 90%; font-family: sans-serif;';
+    
+    box.innerHTML = `
+        <h3 style="margin: 0 0 1rem 0; color: #991b1b; font-size: 1.2rem;">${title}</h3>
+        <p style="margin: 0 0 1.5rem 0; color: #4b5563; font-size: 0.95rem; line-height: 1.5;">${message}</p>
+        <div style="display: flex; gap: 1rem; justify-content: center;">
+            <button id="modalCancelBtn" style="padding: 0.6rem 1.2rem; border: none; background: #e5e7eb; border-radius: 6px; cursor: pointer; color: #374151; font-weight: 600; font-size: 0.9rem; transition: background 0.2s;">Cancel</button>
+            <button id="modalConfirmBtn" style="padding: 0.6rem 1.2rem; border: none; background: #fee2e2; border-radius: 6px; cursor: pointer; color: #991b1b; font-weight: 600; font-size: 0.9rem; transition: background 0.2s;">Confirm Delete</button>
+        </div>
+    `;
+    
+    overlay.appendChild(box);
+    document.body.appendChild(overlay);
+
+    document.getElementById('modalCancelBtn').onclick = () => overlay.remove();
+    document.getElementById('modalConfirmBtn').onclick = () => {
+        overlay.remove();
+        onConfirm();
+    };
+}
+
 /* Delete product */
-function deleteProduct(id, name) {
-    if (!confirm('Delete "' + name + '"? This cannot be undone.')) return;
-    fetch('delete_product.php', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: 'id=' + encodeURIComponent(id) + '&csrf_token=<?= urlencode($_SESSION['csrf_token']) ?>'
-    })
-    .then(r => r.json())
-    .then(d => {
-        if (d.success) {
-            const row = document.getElementById('prod-row-' + id);
-            if (row) row.remove();
-            showAlert('🗑 Product deleted.', 'success');
-        } else { showAlert(d.message || 'Delete failed.', 'error'); }
+function deleteProduct(id, name, btnElement) {
+    showConfirmModal('Delete Product?', 'Are you sure you want to delete "' + name + '"? This cannot be undone.', () => {
+        // Disable button to prevent double-clicks
+        if (btnElement) {
+            btnElement.disabled = true;
+            btnElement.textContent = 'Deleting...';
+        }
+
+        fetch('delete_product.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: 'id=' + encodeURIComponent(id) + '&csrf_token=<?= urlencode($_SESSION['csrf_token']) ?>'
+        })
+        .then(async r => {
+            if (!r.ok) {
+                const rawText = await r.text();
+                throw new Error(`HTTP ${r.status}: ${rawText.substring(0, 100)}`);
+            }
+            return r.json();
+        })
+        .then(d => {
+            if (d.success) {
+                const row = document.getElementById('prod-row-' + id);
+                if (row) row.remove();
+                showAlert('🗑 Product deleted.', 'success');
+            } else {
+                if (d.message === 'Unauthorized' || d.message === 'Invalid token.') {
+                    showAlert('Session expired. Redirecting to login...', 'error');
+                    setTimeout(() => window.location.href = 'login.html', 1500);
+                    return;
+                }
+                showAlert(d.message || 'Delete failed.', 'error');
+                if (btnElement) {
+                    btnElement.disabled = false;
+                    btnElement.textContent = '🗑 Delete';
+                }
+            }
+        })
+        .catch(e => {
+            console.error("Delete Error:", e);
+            showAlert('Error: ' + e.message, 'error');
+            if (btnElement) {
+                btnElement.disabled = false;
+                btnElement.textContent = '🗑 Delete';
+            }
+        });
     });
 }
 
