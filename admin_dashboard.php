@@ -147,7 +147,7 @@ $today_orders  = mysqli_fetch_assoc(mysqli_query($conn, "SELECT COUNT(*) AS c FR
                                         <div class="action-buttons">
                                             <a href="edit_user.php?id=<?= urlencode($row['id']) ?>" class="edit-btn">✏️ Edit</a>
                                             <?php if ($row['role'] !== 'admin'): ?>
-                                                <button class="reset-password-btn" onclick="openResetModal(<?= $row['id'] ?>, '<?= addslashes($row['username']) ?>')">🔑 Reset PW</button>
+                                                <button type="button" class="reset-password-btn" onclick="openResetModal(<?= $row['id'] ?>, <?= htmlspecialchars(json_encode($row['username']), ENT_QUOTES, 'UTF-8') ?>)">🔑 Reset PW</button>
                                             <?php endif; ?>
                                         </div>
                                     </td>
