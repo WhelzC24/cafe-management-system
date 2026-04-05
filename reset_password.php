@@ -3,6 +3,8 @@ session_start();
 require_once 'db.php';
 
 header('Content-Type: application/json');
+error_reporting(E_ALL); ini_set('display_errors', 1);
+try {
 
 if (!isset($_SESSION['user_id']) || ($_SESSION['role'] ?? '') !== 'admin') {
     echo json_encode(['success'=>false,'message'=>'Unauthorized.']); exit;
@@ -30,4 +32,8 @@ if ($ok && $affected > 0) {
     echo json_encode(['success'=>true,'message'=>'Password reset to 12345. User must change it on next login.']);
 } else {
     echo json_encode(['success'=>false,'message'=>'Reset failed or user not found.']);
+}
+} catch (Throwable $e) {
+    http_response_code(500);
+    echo json_encode(['success'=>false, 'message'=>'Server Error: ' . $e->getMessage() . ' on line ' . $e->getLine()]);
 }
