@@ -300,18 +300,34 @@
   /* ── Mobile Nav Toggle ──────────────────────────────── */
   const hamburger = $('hamburger');
   const nav = $('mainNav');
+  const navOverlay = $('mobileNavOverlay');
+
+  function openMobileNav() {
+    nav.classList.add('open');
+    hamburger.classList.add('open');
+    if (navOverlay) navOverlay.classList.add('open');
+    document.body.style.overflow = 'hidden'; // prevent scroll behind drawer
+  }
+
+  function closeMobileNav() {
+    nav.classList.remove('open');
+    hamburger.classList.remove('open');
+    if (navOverlay) navOverlay.classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
   if (hamburger && nav) {
     hamburger.addEventListener('click', () => {
-      nav.classList.toggle('open');
-      hamburger.classList.toggle('open');
+      nav.classList.contains('open') ? closeMobileNav() : openMobileNav();
     });
     // Close on nav link click
     nav.querySelectorAll('.nav-link').forEach(link => {
-      link.addEventListener('click', () => {
-        nav.classList.remove('open');
-        hamburger.classList.remove('open');
-      });
+      link.addEventListener('click', closeMobileNav);
     });
+    // Close when tapping the backdrop overlay
+    if (navOverlay) {
+      navOverlay.addEventListener('click', closeMobileNav);
+    }
   }
 
   /* ── Chatbot Toggle / Messaging ─────────────────────── */
