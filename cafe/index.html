@@ -508,26 +508,35 @@
 </footer>
 
 <!-- ===== CHATBOT ===== -->
-<div id="chatbot-toggle" title="Chat with us">
+<button id="chatbot-toggle" title="Chat with us" aria-label="Open chat assistant">
     <img src="../img/chatbot_avatar.gif" alt="Chat" id="chatbot-avatar">
     <span class="chatbot-pulse"></span>
-</div>
-<div id="chatbot-window">
+    <span class="chatbot-badge" id="chatbotBadge" style="display:none;">1</span>
+</button>
+<div id="chatbot-window" role="dialog" aria-label="Cozy Corner Café Chat Assistant">
     <div class="chatbot-header">
-        <span>☕ Café Assistant</span>
-        <button id="chatbot-close">✕</button>
+        <div class="chatbot-header-left">
+            <div class="chatbot-header-avatar">☕</div>
+            <div>
+                <div class="chatbot-header-name">Café Assistant</div>
+                <div class="chatbot-header-status"><span class="chatbot-online-dot"></span> Online</div>
+            </div>
+        </div>
+        <button id="chatbot-close" aria-label="Close chat">✕</button>
     </div>
     <div class="chatbot-body">
         <div id="chatbot-messages" class="chatbot-messages" aria-live="polite"></div>
         <div class="chatbot-quick-actions" id="chatbot-quick-actions">
-            <button type="button" class="chatbot-chip">What time are you open?</button>
-            <button type="button" class="chatbot-chip">Where are you located?</button>
-            <button type="button" class="chatbot-chip">How do I order pickup?</button>
-            <button type="button" class="chatbot-chip">How do I track my order?</button>
+            <button type="button" class="chatbot-chip">📋 Show me the menu</button>
+            <button type="button" class="chatbot-chip">⭐ What's popular?</button>
+            <button type="button" class="chatbot-chip">🕐 Opening hours</button>
+            <button type="button" class="chatbot-chip">📍 Where are you?</button>
+            <button type="button" class="chatbot-chip">📦 Track my order</button>
+            <button type="button" class="chatbot-chip">☕ Recommend a coffee</button>
         </div>
         <form id="chatbot-form" class="chatbot-form">
-            <input id="chatbot-input" type="text" maxlength="220" placeholder="Ask about menu, hours, location, or orders..." autocomplete="off" required>
-            <button type="submit" class="chatbot-send">➤</button>
+            <input id="chatbot-input" type="text" maxlength="220" placeholder="Ask anything about our café…" autocomplete="off" required aria-label="Chat message">
+            <button type="submit" class="chatbot-send" aria-label="Send message">➤</button>
         </form>
     </div>
 </div>
