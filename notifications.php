@@ -6,17 +6,48 @@ if (!isset($_SESSION['user_id']) || !in_array($_SESSION['role'] ?? '', ['admin',
     echo json_encode(['count'=>0,'orders'=>[]]);
     exit;
 }
-$last_id = (int)($_SESSION['last_seen_order_id'] ?? 0);
+$user_id = (int)$_SESSION['user_id'];
 
-if ($last_id === 0) {
-    // Failsafe: If no session memory exists, don't spam historical orders. Subtly initialize to current max.
-    $resMax = mysqli_query($conn, "SELECT MAX(id) as max_id FROM orders");
-    if ($resMax) {
-        $rowMax = mysqli_fetch_assoc($resMax);
+mysqli_query($conn, "
+    CREATE TABLE IF NOT EXISTS notification_reads (
+        user_id INT PRIMARY KEY,
+        last_seen_order_id INT NOT NULL DEFAULT 0,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+        CONSTRAINT fk_notification_reads_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
+");
+
+$last_id = 0;
+$stRead = mysqli_prepare($conn, 'SELECT last_seen_order_id FROM notification_reads WHERE user_id=? LIMIT 1');
+if ($stRead) {
+    mysqli_stmt_bind_param($stRead, 'i', $user_id);
+    mysqli_stmt_execute($stRead);
+    $resRead = mysqli_stmt_get_result($stRead);
+    $rowRead = $resRead ? mysqli_fetch_assoc($resRead) : null;
+    mysqli_stmt_close($stRead);
+
+    if ($rowRead) {
+        $last_id = (int)($rowRead['last_seen_order_id'] ?? 0);
+    } else {
+        // First run for this user: baseline to current max to avoid flooding historical orders.
+        $resMax = mysqli_query($conn, "SELECT MAX(id) AS max_id FROM orders");
+        $rowMax = $resMax ? mysqli_fetch_assoc($resMax) : null;
         $last_id = (int)($rowMax['max_id'] ?? 0);
-        $_SESSION['last_seen_order_id'] = $last_id;
+
+        $stInsert = mysqli_prepare($conn, '
+            INSERT INTO notification_reads (user_id, last_seen_order_id)
+            VALUES (?, ?)
+            ON DUPLICATE KEY UPDATE last_seen_order_id = VALUES(last_seen_order_id)
+        ');
+        if ($stInsert) {
+            mysqli_stmt_bind_param($stInsert, 'ii', $user_id, $last_id);
+            mysqli_stmt_execute($stInsert);
+            mysqli_stmt_close($stInsert);
+        }
     }
 }
+
+$_SESSION['last_seen_order_id'] = $last_id;
 $st = mysqli_prepare($conn,
     "SELECT o.id, o.customer_name, o.total_amount, o.created_at,
      GROUP_CONCAT(CONCAT(oi.quantity,'x ',oi.product_name) ORDER BY oi.id SEPARATOR ', ') AS items
@@ -37,4 +68,4 @@ while ($row = mysqli_fetch_assoc($res)) {
     if ((int)$row['id'] > $max_id) $max_id = (int)$row['id'];
 }
 mysqli_stmt_close($st);
-echo json_encode(['count'=>count($orders),'orders'=>$orders,'max_id'=>$max_id]);
+echo json_encode(['count'=>count($orders),'orders'=>$orders,'max_id'=>$max_id,'last_seen'=>$last_id]);
