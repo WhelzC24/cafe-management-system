@@ -263,7 +263,6 @@ $statuses=['pending','preparing','ready','completed','cancelled'];
                             <th>Notes</th>
                             <th>Status</th>
                             <th>Time</th>
-                            <th>Action</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -295,15 +294,10 @@ $statuses=['pending','preparing','ready','completed','cancelled'];
                                         </select>
                                     </td>
                                     <td style="font-size:.78rem;white-space:nowrap;"><?= date('M d, Y g:i A', strtotime($ord['created_at'])) ?></td>
-                                    <td>
-                                        <button class="menu-btn danger" style="font-size:.75rem;padding:.3rem .65rem;" onclick="markProcessed(<?= $ord['id'] ?>)">
-                                            ✓ Process
-                                        </button>
-                                    </td>
                                 </tr>
                             <?php endforeach; ?>
                         <?php else: ?>
-                            <tr><td colspan="9" style="text-align:center;color:var(--text-light);padding:3rem;">No orders yet.</td></tr>
+                            <tr><td colspan="8" style="text-align:center;color:var(--text-light);padding:3rem;">No orders yet.</td></tr>
                         <?php endif; ?>
                     </tbody>
                 </table>
@@ -693,30 +687,6 @@ function updateOrderStatus(sel) {
     .catch(() => showAlert('Update failed.', 'error'));
 }
 
-/* Mark processed */
-function markProcessed(id) {
-    if (!confirm('Mark order #' + id + ' as completed?')) return;
-    fetch('update_order_status.php', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: 'order_id=' + encodeURIComponent(id) + '&status=completed'
-    })
-    .then(r => r.json())
-    .then(d => {
-        if (d.success) {
-            const row = document.getElementById('order-row-' + id);
-            if (row) {
-                row.style.opacity = '0.5';
-                row.style.pointerEvents = 'none';
-                // Update the status dropdown to reflect completed status
-                const sel = row.querySelector('.status-select');
-                if (sel) { sel.value = 'completed'; sel.disabled = true; }
-            }
-            showAlert('✓ Order #' + id + ' marked as completed.', 'success');
-        } else { showAlert(d.message || 'Failed.', 'error'); }
-    });
-}
-
 /* Toggle availability */
 function toggleAvailability(id, btn) {
     const newVal = btn.classList.contains('on') ? 0 : 1;
@@ -911,13 +881,14 @@ function refreshOrdersTable() {
                 currentTable.innerHTML = newTable.innerHTML;
             }
             
-            // Seamlessly update the stats figures (like Active Orders count)
-            const stats = doc.querySelectorAll('.stat-value');
-            const currentStats = document.querySelectorAll('.stat-value');
+            // Update stats from the fetched targets, not the placeholder text.
+            const stats = doc.querySelectorAll('.stat-value[data-target]');
+            const currentStats = document.querySelectorAll('.stat-value[data-target]');
             if (stats.length === currentStats.length) {
                 for (let i = 0; i < stats.length; i++) {
-                    currentStats[i].textContent = stats[i].textContent;
-                    currentStats[i].setAttribute('data-target', stats[i].getAttribute('data-target'));
+                    const target = parseInt(stats[i].dataset.target || '0', 10) || 0;
+                    currentStats[i].setAttribute('data-target', String(target));
+                    animateCountUp(currentStats[i], target);
                 }
             }
         }).catch(() => {});
