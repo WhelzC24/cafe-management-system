@@ -29,6 +29,15 @@ if ($user && password_verify($password, $user['password'])) {
     $_SESSION['role'] = $user['role'];
     $_SESSION['must_change_password'] = (int) ($user['must_change_password'] ?? 0);
 
+    // Initialize notification threshold to prevent historical spam on login
+    if ($user['role'] === 'admin' || $user['role'] === 'staff') {
+        $resMax = mysqli_query($conn, "SELECT MAX(id) as max_id FROM orders");
+        if ($resMax) {
+            $rowMax = mysqli_fetch_assoc($resMax);
+            $_SESSION['last_seen_order_id'] = (int)($rowMax['max_id'] ?? 0);
+        }
+    }
+
     $is_admin = $user['role'] === 'admin';
     $is_staff = $user['role'] === 'staff';
     $must_change_password = $_SESSION['must_change_password'] === 1;
