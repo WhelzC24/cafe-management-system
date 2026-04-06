@@ -834,15 +834,7 @@ function showAlert(msg, type) {
     setTimeout(() => { if (el.parentNode) el.remove(); }, timeout);
 }
 
-/* Auto-refresh orders every 60s */
-const _isEditMode = <?= $edit_id > 0 ? 'true' : 'false' ?>;
-let _userHasTyped = false;
-document.getElementById('pname')?.addEventListener('input', () => { _userHasTyped = true; });
-document.getElementById('pdesc')?.addEventListener('input', () => { _userHasTyped = true; });
-setInterval(() => {
-    const ordersActive = document.getElementById('tab-orders')?.classList.contains('active');
-    if (ordersActive && !_userHasTyped) location.reload();
-}, 60000);
+/* Auto-refresh was removed: The real-time notification polling system now alerts staff instead of disruptive full-page reloads. */
 
 /* ── Sidebar active link sync ────────────────── */
 function setSidebarActive(el) {
