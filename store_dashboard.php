@@ -107,141 +107,147 @@ $statuses=['pending','preparing','ready','completed','cancelled'];
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Store Dashboard — Cozy Corner Café</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
     <style>
-        .product-img-thumb {
-            width: 48px; height: 48px;
-            border-radius: 8px; object-fit: cover;
-            border: 2px solid var(--cream-border);
-            vertical-align: middle;
-        }
-        .product-img-placeholder {
-            width: 48px; height: 48px;
-            border-radius: 8px;
-            background: var(--cream-deep);
-            display: inline-flex; align-items: center; justify-content: center;
-            font-size: 1.4rem;
-            border: 2px solid var(--cream-border);
-            vertical-align: middle;
-        }
-        .order-notes-cell { max-width: 180px; font-size: 0.78rem; color: var(--text-light); }
-        /* ── Image source tab switcher ── */
-        .img-source-tabs {
-            display: flex; gap: .4rem;
-            margin-bottom: .75rem;
-        }
-        .img-tab {
-            padding: .4rem 1rem;
-            border-radius: 50px;
-            font-size: .82rem; font-weight: 500;
-            border: 1.5px solid var(--cream-border);
-            background: var(--cream-deep);
-            color: var(--text-mid);
-            cursor: pointer;
-            transition: all .2s;
-        }
-        .img-tab.active {
-            background: var(--brown-dark);
-            border-color: var(--brown-dark);
-            color: #fff;
-        }
-        /* ── Upload dropzone ── */
-        .upload-dropzone {
-            border: 2px dashed var(--cream-border);
-            border-radius: 12px;
-            padding: 1.5rem 1rem;
-            text-align: center;
-            cursor: pointer;
-            transition: all .2s;
-            background: var(--cream);
-            user-select: none;
-        }
-        .upload-dropzone:hover, .upload-dropzone.dragover {
-            border-color: var(--brown-warm);
-            background: #fff8f0;
-        }
-        .dropzone-icon  { font-size: 2rem; margin-bottom: .35rem; }
-        .dropzone-text  { font-size: .88rem; font-weight: 500; color: var(--text-mid); }
-        .dropzone-text strong { color: var(--brown-warm); }
-        .dropzone-sub   { font-size: .75rem; color: var(--text-light); margin-top: .2rem; }
-        .dropzone-filename { font-size: .8rem; color: var(--brown-warm); font-weight: 600; margin-top: .4rem; }
-        /* ── Order status select ── */
-        .status-select {
-            padding: .3rem .5rem;
-            border: 1.5px solid var(--cream-border);
-            border-radius: 6px;
-            font-size: .78rem;
-            font-weight: 500;
-            background: var(--cream);
-            color: var(--text-dark);
-            cursor: pointer;
-            transition: border-color .2s;
-        }
-        .status-select:focus { outline: none; border-color: var(--brown-warm); }
-        /* ── Img panel wrapper ── */
+        /* local overrides */
         .img-panel { display: block; }
         .tab-content { display: none; }
         .tab-content.active { display: block; }
     </style>
 </head>
-<body class="admin-dashboard">
+<body>
 <div id="alertContainer"></div>
-<div class="admin-container">
 
-    <!-- Header -->
-    <div class="admin-header">
-        <div>
-            <h1>📦 Store Dashboard</h1>
-            <p class="admin-subtitle">Welcome, <?= htmlspecialchars($_SESSION['fullname'] ?? 'Staff') ?> · <?= date('l, F j, Y') ?></p>
-        </div>
-        <div class="dashboard-actions">
+<!-- Mobile Sidebar Toggle -->
+<button class="sidebar-toggle" id="sidebarToggle" aria-label="Toggle menu">☰</button>
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+<div class="app-layout">
+
+    <!-- ===== SIDEBAR ===== -->
+    <aside class="sidebar" id="sidebar">
+        <a href="cafe/index.html" class="sidebar-brand" target="_blank">
+            <div class="sidebar-brand-icon">☕</div>
+            <div class="sidebar-brand-text">
+                Cozy Corner
+                <small>Staff Dashboard</small>
+            </div>
+        </a>
+
+        <div class="sidebar-section-label">Main</div>
+        <nav class="sidebar-nav">
+            <button class="sidebar-link active" id="nav-orders" onclick="switchTab('orders',this);setSidebarActive(this)">
+                <span class="sidebar-link-icon">📋</span>
+                Orders
+            </button>
+            <button class="sidebar-link" id="nav-products" onclick="switchTab('products',this);setSidebarActive(this)">
+                <span class="sidebar-link-icon">🛍️</span>
+                Products
+            </button>
+            <button class="sidebar-link" id="nav-add" onclick="switchTab('add',this);setSidebarActive(this)">
+                <span class="sidebar-link-icon"><?= $edit_id > 0 ? '✏️' : '➕' ?></span>
+                <?= $edit_id > 0 ? 'Edit Product' : 'Add Product' ?>
+            </button>
+
+            <div class="sidebar-section-label" style="margin-top:.75rem;">Alerts</div>
+            <button class="sidebar-link" id="nav-notif" onclick="openNotifPanel()">
+                <span class="sidebar-link-icon">🔔</span>
+                Notifications
+                <span class="notif-badge" id="notifBadge"></span>
+            </button>
+
             <?php if ($role === 'admin'): ?>
-                <a href="admin_dashboard.php" class="menu-btn secondary">⚡ Admin Dashboard</a>
-                <a href="staff_management.php" class="menu-btn secondary">👥 Staff</a>
+            <div class="sidebar-section-label" style="margin-top:.75rem;">Admin</div>
+            <a href="admin_dashboard.php" class="sidebar-link">
+                <span class="sidebar-link-icon">⚡</span>
+                Admin Panel
+            </a>
+            <a href="staff_management.php" class="sidebar-link">
+                <span class="sidebar-link-icon">👥</span>
+                Staff Mgmt
+            </a>
             <?php endif; ?>
-            <button type="button" class="menu-btn secondary" onclick="runUploadSelfTest()">🧪 Upload Self-Test</button>
-            <a href="cafe/index.html" class="btn-link-light" target="_blank">🌐 Café Site</a>
-            <a href="change_password.php" class="btn-link-light">🔑 Change PW</a>
-            <a href="logout.php" class="logout-btn">🚪 Logout</a>
+
+            <div class="sidebar-section-label" style="margin-top:.75rem;">System</div>
+            <button class="sidebar-link" onclick="runUploadSelfTest()">
+                <span class="sidebar-link-icon">🧪</span>
+                Upload Test
+            </button>
+            <a href="change_password.php" class="sidebar-link">
+                <span class="sidebar-link-icon">🔑</span>
+                Change Password
+            </a>
+        </nav>
+
+        <div class="sidebar-user">
+            <div class="sidebar-avatar"><?= strtoupper(substr($_SESSION['fullname'] ?? 'S', 0, 1)) ?></div>
+            <div class="sidebar-user-info">
+                <div class="sidebar-user-name"><?= htmlspecialchars($_SESSION['fullname'] ?? 'Staff') ?></div>
+                <div class="sidebar-user-role"><?= ucfirst($role) ?></div>
+            </div>
+            <a href="logout.php" class="sidebar-logout" title="Logout">⬡</a>
+        </div>
+    </aside>
+
+    <!-- ===== NOTIFICATION PANEL ===== -->
+    <div class="notif-panel-overlay" id="notifOverlay" onclick="closeNotifPanel()"></div>
+    <div class="notif-panel" id="notifPanel">
+        <div class="notif-panel-header">
+            <h3>🔔 New Orders</h3>
+            <button class="notif-panel-close" onclick="closeNotifPanel()">✕</button>
+        </div>
+        <div class="notif-list" id="notifList">
+            <div class="notif-empty">No new notifications</div>
+        </div>
+        <div class="notif-panel-footer">
+            <button class="menu-btn secondary" style="width:100%;justify-content:center;" onclick="markAllSeen()">✓ Mark all as seen</button>
         </div>
     </div>
 
-    <?php if ($uploads_warning !== ''): ?>
-        <div style="background:#fff1f2;border:1px solid #fecdd3;color:#9f1239;padding:.85rem 1rem;border-radius:10px;margin:0 0 1rem 0;font-size:.86rem;line-height:1.4;">
-            <strong>Upload warning:</strong> <?= htmlspecialchars($uploads_warning) ?>
-        </div>
-    <?php endif; ?>
+    <!-- ===== MAIN CONTENT ===== -->
+    <main class="main-content">
 
-    <!-- Stats -->
-    <div class="stats-grid">
-        <div class="stat-card">
-            <span class="stat-icon">🛍️</span>
-            <div><div class="stat-label">Total Products</div><div class="stat-value"><?= $s['products'] ?></div></div>
+        <?php if ($uploads_warning !== ''): ?>
+        <div style="background:#fff1f2;border:1px solid #fecdd3;color:#9f1239;padding:.85rem 1rem;border-radius:10px;margin:0 0 1.5rem 0;font-size:.86rem;">
+            <strong>⚠ Upload warning:</strong> <?= htmlspecialchars($uploads_warning) ?>
         </div>
-        <div class="stat-card green">
-            <span class="stat-icon">✅</span>
-            <div><div class="stat-label">Available</div><div class="stat-value"><?= $s['available'] ?></div></div>
-        </div>
-        <div class="stat-card amber">
-            <span class="stat-icon">⏳</span>
-            <div><div class="stat-label">Active Orders</div><div class="stat-value"><?= $s['pending'] ?></div></div>
-        </div>
-        <div class="stat-card blue">
-            <span class="stat-icon">📅</span>
-            <div><div class="stat-label">Today's Orders</div><div class="stat-value"><?= $s['today'] ?></div></div>
-        </div>
-    </div>
+        <?php endif; ?>
 
-    <!-- Tab Navigation -->
-    <div class="dashboard-section">
-        <div class="section-head">
-            <div class="tab-bar" style="border:none;margin:0;">
+        <!-- Page header -->
+        <div class="page-header">
+            <p class="page-greeting">Good <?= (date('H') < 12 ? 'morning' : (date('H') < 17 ? 'afternoon' : 'evening')) ?>, <?= htmlspecialchars(explode(' ', $_SESSION['fullname'] ?? 'there')[0]) ?>! ☕</p>
+            <h1 class="page-title">Store <span>Dashboard</span></h1>
+        </div>
+
+        <!-- Stats -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <span class="stat-icon">🛍️</span>
+                <div><div class="stat-label">Total Products</div><div class="stat-value" data-target="<?= $s['products'] ?>">0</div></div>
+            </div>
+            <div class="stat-card green">
+                <span class="stat-icon">✅</span>
+                <div><div class="stat-label">Available</div><div class="stat-value" data-target="<?= $s['available'] ?>">0</div></div>
+            </div>
+            <div class="stat-card amber">
+                <span class="stat-icon">⏳</span>
+                <div><div class="stat-label">Active Orders</div><div class="stat-value" data-target="<?= $s['pending'] ?>">0</div></div>
+            </div>
+            <div class="stat-card blue">
+                <span class="stat-icon">📅</span>
+                <div><div class="stat-label">Today's Orders</div><div class="stat-value" data-target="<?= $s['today'] ?>">0</div></div>
+            </div>
+        </div>
+
+        <!-- Tab Navigation -->
+        <div class="dashboard-section">
+            <div class="tab-bar">
                 <button class="tab-btn active" onclick="switchTab('orders',this)">📋 Orders</button>
                 <button class="tab-btn" onclick="switchTab('products',this)">🛍️ Products</button>
                 <button class="tab-btn" onclick="switchTab('add',this)"><?= $edit_id > 0 ? '✏️ Edit Product' : '➕ Add Product' ?></button>
             </div>
-        </div>
+
 
         <!-- ===== ORDERS TAB ===== -->
         <div id="tab-orders" class="tab-content active" <?= $edit_id > 0 ? 'style="display:none"' : '' ?>>
@@ -485,8 +491,10 @@ $statuses=['pending','preparing','ready','completed','cancelled'];
                 </form>
             </div>
         </div>
-    </div><!-- /dashboard-section -->
-</div><!-- /admin-container -->
+        </div><!-- /dashboard-section -->
+    </main><!-- /main-content -->
+</div><!-- /app-layout -->
+
 
 <script>
 /* ── Show redirect messages from URL params (success= / error=) ── */
@@ -826,18 +834,147 @@ function showAlert(msg, type) {
     setTimeout(() => { if (el.parentNode) el.remove(); }, timeout);
 }
 
-/* Auto-refresh orders every 60s — only when on orders tab and no unsaved NEW product */
-const _isEditMode = <?= $edit_id > 0 ? 'true' : 'false' ?>; // true when URL has ?edit_product=
-let _userHasTyped = false; // tracks if user manually typed in the add-product form
-
+/* Auto-refresh orders every 60s */
+const _isEditMode = <?= $edit_id > 0 ? 'true' : 'false' ?>;
+let _userHasTyped = false;
 document.getElementById('pname')?.addEventListener('input', () => { _userHasTyped = true; });
 document.getElementById('pdesc')?.addEventListener('input', () => { _userHasTyped = true; });
-
 setInterval(() => {
     const ordersActive = document.getElementById('tab-orders')?.classList.contains('active');
-    // Don't refresh if user has manually typed into the add-product form
     if (ordersActive && !_userHasTyped) location.reload();
 }, 60000);
+
+/* ── Sidebar active link sync ────────────────── */
+function setSidebarActive(el) {
+    document.querySelectorAll('.sidebar .sidebar-link').forEach(l => l.classList.remove('active'));
+    el.classList.add('active');
+}
+
+/* ── Mobile sidebar toggle ───────────────────── */
+document.getElementById('sidebarToggle')?.addEventListener('click', () => {
+    document.getElementById('sidebar').classList.toggle('mobile-open');
+    document.getElementById('sidebarOverlay').classList.toggle('show');
+});
+document.getElementById('sidebarOverlay')?.addEventListener('click', () => {
+    document.getElementById('sidebar').classList.remove('mobile-open');
+    document.getElementById('sidebarOverlay').classList.remove('show');
+});
+
+/* ── Count-up animation ──────────────────────── */
+function animateCountUp(el, target, duration = 900) {
+    let start = 0;
+    const step = Math.ceil(target / (duration / 16));
+    const timer = setInterval(() => {
+        start += step;
+        if (start >= target) { el.textContent = target; clearInterval(timer); }
+        else { el.textContent = start; }
+    }, 16);
+}
+document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('.stat-value[data-target]').forEach(el => {
+        const target = parseInt(el.dataset.target) || 0;
+        animateCountUp(el, target);
+    });
+});
+
+/* ── Notification system ─────────────────────── */
+let _pendingOrders = [];
+let _maxSeenId = 0;
+
+function chime() {
+    try {
+        const ctx = new (window.AudioContext || window.webkitAudioContext)();
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.connect(gain); gain.connect(ctx.destination);
+        osc.type = 'sine'; osc.frequency.setValueAtTime(880, ctx.currentTime);
+        gain.gain.setValueAtTime(0.3, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.6);
+        osc.start(ctx.currentTime); osc.stop(ctx.currentTime + 0.6);
+    } catch(e) {}
+}
+
+function pollNotifications() {
+    fetch('notifications.php')
+        .then(r => r.json())
+        .then(d => {
+            if (d.count > 0) {
+                _pendingOrders = d.orders;
+                _maxSeenId = d.max_id;
+                updateBell(d.count);
+                d.orders.forEach(o => showOrderToast(o));
+                chime();
+            }
+        })
+        .catch(() => {});
+}
+
+function updateBell(count) {
+    const badge = document.getElementById('notifBadge');
+    if (!badge) return;
+    if (count > 0) {
+        badge.textContent = count > 9 ? '9+' : count;
+        badge.classList.add('show');
+    } else {
+        badge.classList.remove('show');
+    }
+}
+
+function showOrderToast(order) {
+    const c = document.getElementById('alertContainer');
+    const el = document.createElement('div');
+    el.className = 'alert-msg info';
+    el.innerHTML = `🛒 New order from <strong>${order.customer}</strong> — ₱${order.total}`;
+    el.style.cursor = 'pointer';
+    el.title = 'Click to view orders';
+    el.addEventListener('click', () => { switchTab('orders', document.querySelector('.tab-btn')); el.remove(); });
+    c.appendChild(el);
+    setTimeout(() => { if (el.parentNode) el.remove(); }, 6000);
+}
+
+function openNotifPanel() {
+    const panel   = document.getElementById('notifPanel');
+    const overlay = document.getElementById('notifOverlay');
+    const list    = document.getElementById('notifList');
+    panel?.classList.add('open');
+    overlay?.classList.add('open');
+    // Render items
+    if (_pendingOrders.length === 0) {
+        list.innerHTML = '<div class="notif-empty">🎉 All caught up! No new orders.</div>';
+    } else {
+        list.innerHTML = _pendingOrders.map(o => `
+            <div class="notif-item">
+                <div class="notif-item-top">
+                    <span class="notif-item-customer">${o.customer}</span>
+                    <span class="notif-item-time">${o.time}</span>
+                </div>
+                <div class="notif-item-items">${o.items}</div>
+                <div class="notif-item-total">₱${o.total}</div>
+            </div>
+        `).join('');
+    }
+}
+
+function closeNotifPanel() {
+    document.getElementById('notifPanel')?.classList.remove('open');
+    document.getElementById('notifOverlay')?.classList.remove('open');
+}
+
+function markAllSeen() {
+    if (_maxSeenId > 0) {
+        fetch('mark_notifications_seen.php', {
+            method: 'POST',
+            headers: {'Content-Type':'application/x-www-form-urlencoded'},
+            body: 'max_id=' + _maxSeenId
+        });
+    }
+    _pendingOrders = [];
+    updateBell(0);
+    closeNotifPanel();
+}
+
+// Start polling after 5s delay, then every 20s
+setTimeout(() => { pollNotifications(); setInterval(pollNotifications, 20000); }, 5000);
 </script>
 </body>
 </html>
