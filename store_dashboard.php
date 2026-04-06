@@ -153,7 +153,7 @@ $statuses=['pending','preparing','ready','completed','cancelled'];
             <div class="sidebar-section-label" style="margin-top:.75rem;">Alerts</div>
             <button class="sidebar-link" id="nav-notif" onclick="openNotifPanel()">
                 <span class="sidebar-link-icon">🔔</span>
-                Notifications
+                <span class="sidebar-link-label" style="font-family:'Inter',system-ui,sans-serif;">Notifications</span>
                 <span class="notif-badge" id="notifBadge"></span>
             </button>
 
@@ -913,8 +913,7 @@ function pollNotifications() {
                 // Silently refresh the active orders UI without a full page reload!
                 refreshOrdersTable();
 
-                // Tell the server asap so it doesn't return these on the next poll
-                serverMarkSeen(d.max_id);
+                // Keep unread state until staff explicitly marks as seen.
             }
         })
         .catch(() => {});
