@@ -7,6 +7,16 @@ if (!isset($_SESSION['user_id']) || !in_array($_SESSION['role'] ?? '', ['admin',
     exit;
 }
 $last_id = (int)($_SESSION['last_seen_order_id'] ?? 0);
+
+if ($last_id === 0) {
+    // Failsafe: If no session memory exists, don't spam historical orders. Subtly initialize to current max.
+    $resMax = mysqli_query($conn, "SELECT MAX(id) as max_id FROM orders");
+    if ($resMax) {
+        $rowMax = mysqli_fetch_assoc($resMax);
+        $last_id = (int)($rowMax['max_id'] ?? 0);
+        $_SESSION['last_seen_order_id'] = $last_id;
+    }
+}
 $st = mysqli_prepare($conn,
     "SELECT o.id, o.customer_name, o.total_amount, o.created_at,
      GROUP_CONCAT(CONCAT(oi.quantity,'x ',oi.product_name) ORDER BY oi.id SEPARATOR ', ') AS items
