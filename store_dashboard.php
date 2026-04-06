@@ -282,7 +282,7 @@ $statuses=['pending','preparing','ready','completed','cancelled'];
                                     <td><strong>₱<?= number_format($ord['total_amount'],2) ?></strong></td>
                                     <td class="order-notes-cell"><?= htmlspecialchars($ord['notes'] ?? '—') ?></td>
                                     <td>
-                                        <select class="status-select" data-order-id="<?= $ord['id'] ?>" onchange="updateOrderStatus(this)">
+                                        <select class="status-select" data-order-id="<?= $ord['id'] ?>" data-status="<?= $ord['status'] ?>" onchange="updateOrderStatus(this);this.setAttribute('data-status',this.value)">
                                             <?php foreach ($statuses as $st): ?>
                                                 <option value="<?= $st ?>" <?= $ord['status']===$st?'selected':'' ?>><?= ucfirst($st) ?></option>
                                             <?php endforeach; ?>
