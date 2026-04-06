@@ -346,17 +346,15 @@
 
   function appendChatMessage(role, text, showTime = true) {
     if (!chatMessages) return;
-    // Clear empty state if exists
     const emptyState = chatMessages.querySelector('.chat-messages-empty');
     if (emptyState) emptyState.remove();
-    
     const item = document.createElement('div');
     item.className = 'chat-message ' + role;
-    
+    // Support **bold** markdown
+    const formatted = String(text).replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
     const textSpan = document.createElement('span');
-    textSpan.textContent = text;
+    textSpan.innerHTML = formatted;
     item.appendChild(textSpan);
-    
     if (showTime) {
       const timeSpan = document.createElement('span');
       timeSpan.className = 'chat-message-time';
@@ -364,7 +362,6 @@
       timeSpan.textContent = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
       item.appendChild(timeSpan);
     }
-    
     chatMessages.appendChild(item);
     chatMessages.scrollTop = chatMessages.scrollHeight;
   }
@@ -390,28 +387,23 @@
 
   function localFallbackAnswer(message) {
     const msg = String(message || '').toLowerCase();
-    if (/hour|open|close|time|schedule/.test(msg)) {
-      return 'We are open Monday-Friday 7:00 AM to 8:00 PM, and Saturday-Sunday 8:00 AM to 9:00 PM.';
-    }
-    if (/where|location|address|find/.test(msg)) {
-      return 'You can find us at Cuasi, Loon, Bohol.';
-    }
-    if (/phone|call|contact/.test(msg)) {
-      return 'You can call us at 09361679546 or email wlaniba330@gmail.com.';
-    }
-    if (/order/.test(msg) && /(status|tracking|track|where|ready|preparing)/.test(msg)) {
-      return 'For order status, please send your order reference number (example: #123) and the phone number you used when ordering.';
-    }
-    if (/email/.test(msg)) {
-      return 'For email, contact us at wlaniba330@gmail.com.';
-    }
-    if (/order|pickup|buy/.test(msg)) {
-      return 'To place an order: open the Order for Pickup section, choose items, enter your details (Full Name and Phone are required; Email is optional), then tap Place My Order.';
-    }
-    if (/menu|coffee|pastr|food|drink/.test(msg)) {
-      return 'Our menu includes coffee, cold drinks, hot drinks, pastries, and food. I can help if you ask for specific item recommendations.';
-    }
-    return 'I can help with menu items, pricing, location, opening hours, and pickup orders. What would you like to know?';
+    const hour = new Date().getHours();
+    const greet = hour < 12 ? 'Good morning' : hour < 17 ? 'Good afternoon' : 'Good evening';
+    if (/hello|hi |hey|howdy/.test(msg)) return `${greet}! Welcome to Cozy Corner Café! ☕\n\nI can help with:\n• 📋 Menu & prices\n• 🕐 Opening hours\n• 📍 Location\n• 📦 Order tracking\n\nWhat can I get for you?`;
+    if (/hour|open|close|schedule|when/.test(msg)) return '🕐 Opening Hours:\n\n• Mon – Fri: 7:00 AM – 8:00 PM\n• Saturday: 8:00 AM – 9:00 PM\n• Sunday: 8:00 AM – 9:00 PM';
+    if (/where|location|address|find/.test(msg)) return '📍 We are located at:\n\nCuasi, Loon, Bohol\n\nCall us for directions: 📞 09361679546';
+    if (/phone|call|contact|email/.test(msg)) return '📞 Contact us:\n\n• Phone: 09361679546\n• Email: wlaniba330@gmail.com';
+    if (/track|status|ready|preparing/.test(msg)) return 'To track your order, send:\n• Your order number (e.g. #42)\n• Your phone number\n\nExample: "Track order #42 09361679546"';
+    if (/order|pickup|buy|cart/.test(msg)) return '🛒 To order pickup:\n\n1. Scroll to "Order for Pickup"\n2. Add items to cart\n3. Enter name & phone\n4. Tap **Place My Order**';
+    if (/pay|cash|gcash|maya/.test(msg)) return '💳 We accept: Cash, GCash, and PayMaya!';
+    if (/wifi|wi-fi|internet/.test(msg)) return '📶 Yes, we have free Wi-Fi! Ask our staff for the password when you arrive.';
+    if (/allergy|vegan|vegetarian|gluten/.test(msg)) return '🌿 For allergy/dietary info, please call us at 📞 09361679546 so we can confirm before you order.';
+    if (/menu|coffee|food|drink|pastr/.test(msg)) return '📋 We have Coffee, Cold Drinks, Hot Drinks, Pastries, and Food!\n\nAsk \"Show me the menu\" to see items and prices, or ask about a specific item!';
+    if (/recommend|best|popular/.test(msg)) return '⭐ Popular picks include our Signature Cappuccino, Iced Matcha Latte, and Cinnamon Roll!\n\nTell me what you prefer (coffee, cold, pastry) and I can suggest more!';
+    if (/price|cost|how much/.test(msg)) return '💰 Ask me about a specific item (e.g. "How much is the Cappuccino?") and I\'ll tell you the price!';
+    if (/thank/.test(msg)) return "You're welcome! 😊 Anything else I can help with?";
+    if (/bye|goodbye/.test(msg)) return 'Goodbye! Hope to see you at Cozy Corner Café soon. ☕';
+    return 'I can help with:\n\n• 📋 Menu & prices\n• ☕ Coffee recs\n• 🕐 Hours\n• 📍 Location\n• 📦 Order tracking\n• 💳 Payments\n\nWhat would you like to know?';
   }
 
   async function sendChatMessage(message) {
@@ -494,7 +486,9 @@
   }
 
   if (chatMessages) {
-    const greeting = '☕ Welcome to Cozy Corner Café!\n\nI can help you with:\n• Our menu & prices\n• Opening hours & location\n• Placing pickup orders\n• Tracking your order\n\nWhat would you like to know?';
+    const hour = new Date().getHours();
+    const greet = hour < 12 ? 'Good morning' : hour < 17 ? 'Good afternoon' : 'Good evening';
+    const greeting = `${greet}! Welcome to Cozy Corner Café ☕\n\nI can help you with:\n• 📋 Menu & prices\n• 🕐 Opening hours & location\n• ☕ Coffee recommendations\n• 📦 Order tracking\n• 💳 Payment options\n\nWhat can I get for you today?`;
     appendChatMessage('bot', greeting);
     pushChatHistory('bot', greeting);
   }
