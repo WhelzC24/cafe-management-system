@@ -137,6 +137,7 @@ body {
 
 .sidebar-link {
   all: unset;
+  box-sizing: border-box !important;
   display: flex;
   align-items: center;
   gap: 0.75rem;
@@ -158,6 +159,10 @@ body {
   appearance: none;
   -webkit-appearance: none;
   -moz-appearance: none;
+}
+
+button.sidebar-link {
+  box-sizing: border-box !important;
 }
 .sidebar-link:hover {
   background: var(--sidebar-hover);
@@ -193,7 +198,7 @@ body {
 
 /* Notification bell badge */
 .notif-badge {
-  margin-left: auto;
+  margin-left: 0.45rem;
   background: var(--red);
   color: #fff;
   font-size: 0.65rem;
