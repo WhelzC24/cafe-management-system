@@ -879,12 +879,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
 /* ── Notification system ─────────────────────── */
 let _pendingOrders = [];
-let _maxSeenId = 0;
+let _maxSeenId     = <?= (int)($_SESSION['last_seen_order_id'] ?? 0) ?>;
+// Client-side dedup: once an order is shown, NEVER show it again this session
+const _shownOrderIds = new Set();
 
 function chime() {
     try {
-        const ctx = new (window.AudioContext || window.webkitAudioContext)();
-        const osc = ctx.createOscillator();
+        const ctx  = new (window.AudioContext || window.webkitAudioContext)();
+        const osc  = ctx.createOscillator();
         const gain = ctx.createGain();
         osc.connect(gain); gain.connect(ctx.destination);
         osc.type = 'sine'; osc.frequency.setValueAtTime(880, ctx.currentTime);
@@ -894,16 +896,39 @@ function chime() {
     } catch(e) {}
 }
 
+function serverMarkSeen(id) {
+    if (!id || id <= 0) return;
+    fetch('mark_notifications_seen.php', {
+        method:  'POST',
+        headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+        body:    'max_id=' + id
+    }).catch(() => {});
+}
+
 function pollNotifications() {
     fetch('notifications.php')
         .then(r => r.json())
         .then(d => {
             if (d.count > 0) {
-                _pendingOrders = d.orders;
-                _maxSeenId = d.max_id;
-                updateBell(d.count);
-                d.orders.forEach(o => showOrderToast(o));
+                // Only process orders we have NOT shown yet
+                const newOrders = d.orders.filter(o => !_shownOrderIds.has(o.id));
+                if (newOrders.length === 0) return; // already shown all of these
+
+                // Mark them as shown client-side immediately
+                newOrders.forEach(o => _shownOrderIds.add(o.id));
+
+                // Accumulate pending (for the panel) — merge, don't replace
+                _pendingOrders = [..._pendingOrders, ...newOrders];
+
+                // Update the high-water mark (never go backwards)
+                if (d.max_id > _maxSeenId) _maxSeenId = d.max_id;
+
+                updateBell(_pendingOrders.length);
+                newOrders.forEach(o => showOrderToast(o));
                 chime();
+
+                // Tell the server asap so it doesn't return these on the next poll
+                serverMarkSeen(d.max_id);
             }
         })
         .catch(() => {});
@@ -917,17 +942,21 @@ function updateBell(count) {
         badge.classList.add('show');
     } else {
         badge.classList.remove('show');
+        badge.textContent = '';
     }
 }
 
 function showOrderToast(order) {
-    const c = document.getElementById('alertContainer');
+    const c  = document.getElementById('alertContainer');
     const el = document.createElement('div');
     el.className = 'alert-msg info';
     el.innerHTML = `🛒 New order from <strong>${order.customer}</strong> — ₱${order.total}`;
     el.style.cursor = 'pointer';
     el.title = 'Click to view orders';
-    el.addEventListener('click', () => { switchTab('orders', document.querySelector('.tab-btn')); el.remove(); });
+    el.addEventListener('click', () => {
+        switchTab('orders', document.querySelector('.tab-btn'));
+        el.remove();
+    });
     c.appendChild(el);
     setTimeout(() => { if (el.parentNode) el.remove(); }, 6000);
 }
@@ -938,7 +967,7 @@ function openNotifPanel() {
     const list    = document.getElementById('notifList');
     panel?.classList.add('open');
     overlay?.classList.add('open');
-    // Render items
+
     if (_pendingOrders.length === 0) {
         list.innerHTML = '<div class="notif-empty">🎉 All caught up! No new orders.</div>';
     } else {
@@ -961,20 +990,29 @@ function closeNotifPanel() {
 }
 
 function markAllSeen() {
-    if (_maxSeenId > 0) {
-        fetch('mark_notifications_seen.php', {
-            method: 'POST',
-            headers: {'Content-Type':'application/x-www-form-urlencoded'},
-            body: 'max_id=' + _maxSeenId
-        });
-    }
+    // Tell the server to mark ALL historical orders as seen, returning the absolute max ID
+    fetch('mark_notifications_seen.php', {
+        method:  'POST',
+        headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+        body:    'mark_all=1'
+    })
+    .then(r => r.json())
+    .then(d => {
+        if (d.max_id) _maxSeenId = d.max_id;
+    }).catch(() => {});
+
+    // Clear pending list (bell goes away) but keep _shownOrderIds intact
     _pendingOrders = [];
     updateBell(0);
     closeNotifPanel();
+    const list = document.getElementById('notifList');
+    if (list) list.innerHTML = '<div class="notif-empty">🎉 All caught up! No new orders.</div>';
 }
 
 // Start polling after 5s delay, then every 20s
 setTimeout(() => { pollNotifications(); setInterval(pollNotifications, 20000); }, 5000);
+
+
 </script>
 </body>
 </html>
