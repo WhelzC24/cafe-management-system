@@ -897,6 +897,32 @@ function serverMarkSeen(id) {
     }).catch(() => {});
 }
 
+function refreshOrdersTable() {
+    fetch('store_dashboard.php')
+        .then(r => r.text())
+        .then(html => {
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(html, 'text/html');
+            
+            // Seamlessly swap the orders table HTML
+            const newTable = doc.getElementById('tab-orders');
+            const currentTable = document.getElementById('tab-orders');
+            if (newTable && currentTable) {
+                currentTable.innerHTML = newTable.innerHTML;
+            }
+            
+            // Seamlessly update the stats figures (like Active Orders count)
+            const stats = doc.querySelectorAll('.stat-value');
+            const currentStats = document.querySelectorAll('.stat-value');
+            if (stats.length === currentStats.length) {
+                for (let i = 0; i < stats.length; i++) {
+                    currentStats[i].textContent = stats[i].textContent;
+                    currentStats[i].setAttribute('data-target', stats[i].getAttribute('data-target'));
+                }
+            }
+        }).catch(() => {});
+}
+
 function pollNotifications() {
     fetch('notifications.php')
         .then(r => r.json())
@@ -918,6 +944,9 @@ function pollNotifications() {
                 updateBell(_pendingOrders.length);
                 newOrders.forEach(o => showOrderToast(o));
                 chime();
+
+                // Silently refresh the active orders UI without a full page reload!
+                refreshOrdersTable();
 
                 // Tell the server asap so it doesn't return these on the next poll
                 serverMarkSeen(d.max_id);
