@@ -418,21 +418,28 @@ tbody tr:hover { background: var(--cream); }
 .avail-toggle.on  { background: #dcfce7; color: #166534; }
 .avail-toggle.off { background: #fee2e2; color: #991b1b; }
 
-/* Order status dropdown */
+/* Order status dropdown — color coded */
 .status-select {
-    padding: 0.3rem 0.5rem;
+    padding: 0.35rem 0.6rem;
     border: 1.5px solid var(--cream-border);
-    border-radius: 6px;
+    border-radius: 20px;
     font-size: 0.78rem;
-    font-weight: 500;
-    background: var(--cream);
-    color: var(--text-dark);
+    font-weight: 600;
     cursor: pointer;
-    transition: border-color 0.2s;
+    transition: border-color 0.2s, background 0.2s;
     width: 100%;
-    min-width: 110px;
+    min-width: 118px;
+    appearance: none;
+    -webkit-appearance: none;
+    text-align: center;
+    background-color: #fef3c7; color: #92400e;  /* default: pending */
 }
 .status-select:focus { outline: none; border-color: var(--brown-warm); }
+.status-select[data-status="pending"]   { background:#fef3c7; color:#92400e; border-color:#fcd34d; }
+.status-select[data-status="preparing"] { background:#dbeafe; color:#1e40af; border-color:#93c5fd; }
+.status-select[data-status="ready"]     { background:#dcfce7; color:#166534; border-color:#86efac; }
+.status-select[data-status="completed"] { background:#f0fdf4; color:#15803d; border-color:#bbf7d0; }
+.status-select[data-status="cancelled"] { background:#fee2e2; color:#991b1b; border-color:#fca5a5; }
 
 /* Img panel wrapper used in product form */
 .img-panel { display: block; }
