@@ -39,14 +39,20 @@ if (empty($_SESSION['csrf_token'])) $_SESSION['csrf_token'] = bin2hex(random_byt
             <?php endif; ?>
             <div class="field-stack" style="margin-bottom:.5rem;">
                 <label for="new_password">New Password</label>
-                <input type="password" id="new_password" name="new_password" minlength="8" required placeholder="Min. 8 characters">
+                <div style="position:relative;">
+                    <input type="password" id="new_password" name="new_password" minlength="8" required placeholder="Min. 8 characters" style="width:100%;padding-right:2.8rem;">
+                    <button type="button" onclick="(function(){var i=document.getElementById('new_password');i.type=i.type==='password'?'text':'password';this.textContent=i.type==='password'?'👁':'🙈';}).call(this)" style="position:absolute;right:0.8rem;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:1rem;padding:0;color:#7D6350;">👁</button>
+                </div>
             </div>
-            <div style="height:4px;border-radius:2px;background:#E8D9C4;overflow:hidden;margin-bottom:1rem;">
+            <div style="height:4px;border-radius:2px;background:#E8D9C4;overflow:hidden;margin-bottom:1rem;margin-top:0;border:none;">
                 <div id="pwBar" style="height:100%;width:0;border-radius:2px;transition:.3s;"></div>
             </div>
             <div class="field-stack" style="margin-bottom:1rem;">
                 <label for="confirm_password">Confirm New Password</label>
-                <input type="password" id="confirm_password" name="confirm_password" required placeholder="Repeat new password">
+                <div style="position:relative;">
+                    <input type="password" id="confirm_password" name="confirm_password" required placeholder="Repeat new password" style="width:100%;padding-right:2.8rem;">
+                    <button type="button" onclick="(function(){var i=document.getElementById('confirm_password');i.type=i.type==='password'?'text':'password';this.textContent=i.type==='password'?'👁':'🙈';}).call(this)" style="position:absolute;right:0.8rem;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:1rem;padding:0;color:#7D6350;">👁</button>
+                </div>
             </div>
             <div class="btn-row">
                 <button type="submit" class="menu-btn primary">💾 Update Password</button>
