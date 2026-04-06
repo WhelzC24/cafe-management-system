@@ -113,6 +113,31 @@
             .login-visual { display: none; }
             .login-form-panel { padding: 3rem 1.5rem; }
         }
+        /* Entrance animations */
+        @keyframes panelFadeUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+        .form-container { animation: panelFadeUp 0.6s ease both; }
+        .back-link  { animation: panelFadeUp 0.5s ease both; animation-delay: 0.1s; }
+        .form-title { animation: panelFadeUp 0.5s ease both; animation-delay: 0.2s; }
+        .form-sub   { animation: panelFadeUp 0.5s ease both; animation-delay: 0.3s; }
+        .field:nth-child(1) { animation: panelFadeUp 0.5s ease both; animation-delay: 0.35s; }
+        .field:nth-child(2) { animation: panelFadeUp 0.5s ease both; animation-delay: 0.45s; }
+        .submit-btn { animation: panelFadeUp 0.5s ease both; animation-delay: 0.55s; }
+        /* Glow focus */
+        .field input:focus {
+            border-color: #8B4513;
+            box-shadow: 0 0 0 3px rgba(139,69,19,0.12);
+        }
+        /* Button loading */
+        .submit-btn:disabled { opacity: 0.7; cursor: not-allowed; transform: none; }
+        /* Animated logo icon */
+        .visual-logo { animation: panelFadeUp 0.8s ease both; animation-delay: 0.1s; }
+        .visual-quote { animation: panelFadeUp 0.8s ease both; animation-delay: 0.3s; }
+        .visual-sub   { animation: panelFadeUp 0.8s ease both; animation-delay: 0.5s; }
+        /* Error box transition */
+        .error-box { transition: all 0.3s ease; }
     </style>
 </head>
 <body>
@@ -153,13 +178,18 @@
     </div>
 
     <script>
-        const params = new URLSearchParams(window.location.search);
-        const err = params.get('error');
-        if (err) {
-            const box = document.getElementById('errorBox');
-            box.textContent = decodeURIComponent(err);
-            box.classList.add('show');
-        }
+    const params = new URLSearchParams(window.location.search);
+    const err = params.get('error');
+    if (err) {
+        const box = document.getElementById('errorBox');
+        box.textContent = decodeURIComponent(err);
+        box.classList.add('show');
+    }
+    // Submit loading state
+    document.getElementById('loginForm')?.addEventListener('submit', function() {
+        const btn = this.querySelector('.submit-btn');
+        if (btn) { btn.disabled = true; btn.textContent = 'Signing in…'; }
+    });
     </script>
 </body>
 </html>
