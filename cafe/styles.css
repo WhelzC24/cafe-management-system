@@ -493,6 +493,45 @@ textarea {
   }
 }
 
+/* ── HERO ENTRANCE ANIMATIONS ───────────────────── */
+@keyframes heroFadeUp {
+  from { opacity: 0; transform: translateY(28px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.hero-eyebrow  { animation: heroFadeUp 0.7s ease both; animation-delay: 0.1s; }
+.hero-title    { animation: heroFadeUp 0.7s ease both; animation-delay: 0.3s; }
+.hero-subtitle { animation: heroFadeUp 0.7s ease both; animation-delay: 0.5s; }
+.hero-actions  { animation: heroFadeUp 0.7s ease both; animation-delay: 0.7s; }
+.hero-badges   { animation: heroFadeUp 0.7s ease both; animation-delay: 0.9s; }
+
+/* Button shine sweep on hover */
+.btn { position: relative; overflow: hidden; }
+.btn::after {
+  content: '';
+  position: absolute;
+  top: 0; left: -100%;
+  width: 60%; height: 100%;
+  background: linear-gradient(120deg, transparent, rgba(255,255,255,0.18), transparent);
+  transition: left 0.45s ease;
+}
+.btn:hover::after { left: 130%; }
+
+/* ── SCROLL-REVEAL UTILITY ───────────────────────── */
+.reveal {
+  opacity: 0;
+  transform: translateY(32px);
+  transition: opacity 0.65s ease, transform 0.65s ease;
+}
+.reveal.revealed {
+  opacity: 1;
+  transform: translateY(0);
+}
+.reveal.delay-1 { transition-delay: 0.1s; }
+.reveal.delay-2 { transition-delay: 0.2s; }
+.reveal.delay-3 { transition-delay: 0.3s; }
+.reveal.delay-4 { transition-delay: 0.4s; }
+
 /* ── HIGHLIGHTS BAR ─────────────────────────────── */
 .highlights-bar {
   background: var(--brown-dark);
