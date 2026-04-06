@@ -139,15 +139,15 @@ $statuses=['pending','preparing','ready','completed','cancelled'];
         <nav class="sidebar-nav">
             <button class="sidebar-link active" id="nav-orders" onclick="switchTab('orders',this);setSidebarActive(this)">
                 <span class="sidebar-link-icon">📋</span>
-                Orders
+                <span class="sidebar-link-label" style="font-family:'Inter',system-ui,sans-serif;">Orders</span>
             </button>
             <button class="sidebar-link" id="nav-products" onclick="switchTab('products',this);setSidebarActive(this)">
                 <span class="sidebar-link-icon">🛍️</span>
-                Products
+                <span class="sidebar-link-label" style="font-family:'Inter',system-ui,sans-serif;">Products</span>
             </button>
             <button class="sidebar-link" id="nav-add" onclick="switchTab('add',this);setSidebarActive(this)">
                 <span class="sidebar-link-icon"><?= $edit_id > 0 ? '✏️' : '➕' ?></span>
-                <?= $edit_id > 0 ? 'Edit Product' : 'Add Product' ?>
+                <span class="sidebar-link-label" style="font-family:'Inter',system-ui,sans-serif;"><?= $edit_id > 0 ? 'Edit Product' : 'Add Product' ?></span>
             </button>
 
             <div class="sidebar-section-label" style="margin-top:.75rem;">Alerts</div>
@@ -170,10 +170,12 @@ $statuses=['pending','preparing','ready','completed','cancelled'];
             <?php endif; ?>
 
             <div class="sidebar-section-label" style="margin-top:.75rem;">System</div>
+            <?php if ($role === 'admin'): ?>
             <button class="sidebar-link" onclick="runUploadSelfTest()">
                 <span class="sidebar-link-icon">🧪</span>
-                Upload Test
+                <span class="sidebar-link-label" style="font-family:'Inter',system-ui,sans-serif;">Upload Test</span>
             </button>
+            <?php endif; ?>
             <a href="change_password.php" class="sidebar-link">
                 <span class="sidebar-link-icon">🔑</span>
                 Change Password
@@ -240,15 +242,7 @@ $statuses=['pending','preparing','ready','completed','cancelled'];
             </div>
         </div>
 
-        <!-- Tab Navigation -->
         <div class="dashboard-section">
-            <div class="tab-bar">
-                <button class="tab-btn active" onclick="switchTab('orders',this)">📋 Orders</button>
-                <button class="tab-btn" onclick="switchTab('products',this)">🛍️ Products</button>
-                <button class="tab-btn" onclick="switchTab('add',this)"><?= $edit_id > 0 ? '✏️ Edit Product' : '➕ Add Product' ?></button>
-            </div>
-
-
         <!-- ===== ORDERS TAB ===== -->
         <div id="tab-orders" class="tab-content active" <?= $edit_id > 0 ? 'style="display:none"' : '' ?>>
             <div class="table-wrapper" style="border:none;border-radius:0;">
@@ -511,16 +505,16 @@ $statuses=['pending','preparing','ready','completed','cancelled'];
 /* Tab switching */
 function switchTab(name, btn) {
     document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
-    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.sidebar-link').forEach(b => b.classList.remove('active'));
     document.getElementById('tab-' + name).classList.add('active');
     if (btn) btn.classList.add('active');
 }
 function switchToAdd() {
-    switchTab('add', document.querySelectorAll('.tab-btn')[2]);
+    switchTab('add', document.getElementById('nav-add'));
 }
 <?php if ($edit_id > 0): ?>
 window.addEventListener('DOMContentLoaded', () => {
-    switchTab('add', document.querySelectorAll('.tab-btn')[2]);
+    switchTab('add', document.getElementById('nav-add'));
     setTimeout(() => {
         const t = document.getElementById('tab-add');
         if (t) t.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -946,7 +940,7 @@ function showOrderToast(order) {
     el.style.cursor = 'pointer';
     el.title = 'Click to view orders';
     el.addEventListener('click', () => {
-        switchTab('orders', document.querySelector('.tab-btn'));
+        switchTab('orders', document.getElementById('nav-orders'));
         el.remove();
     });
     c.appendChild(el);
