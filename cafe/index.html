@@ -543,5 +543,23 @@
 </div>
 
 <script src="store.js"></script>
+<script>
+/* ── Scroll-Reveal ─────────────────────────── */
+document.querySelectorAll(
+  '.section-header, .section-eyebrow, .section-title, .section-desc, ' +
+  '.highlight-item, .specials-card, .testimonial-card, ' +
+  '.about-image-side, .about-text-side, .menu-card, ' +
+  '.contact-form-wrap, .contact-info-wrap, .footer-col'
+).forEach((el, i) => {
+  el.classList.add('reveal');
+  if (i % 4 === 1) el.classList.add('delay-1');
+  if (i % 4 === 2) el.classList.add('delay-2');
+  if (i % 4 === 3) el.classList.add('delay-3');
+});
+const revealObs = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('revealed'); revealObs.unobserve(e.target); } });
+}, { threshold: 0.12 });
+document.querySelectorAll('.reveal').forEach(el => revealObs.observe(el));
+</script>
 </body>
 </html>
